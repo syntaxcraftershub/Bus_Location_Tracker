@@ -2,774 +2,1097 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>CityBus Live — Coimbatore</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* ── Design tokens ─────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════
+   DESIGN SYSTEM — 3D EDITION
+═══════════════════════════════════════════════ */
 :root {
-  --bg:        #060a12;
-  --s1:        #0a1020;   /* surface 1 – sidebar, header */
-  --s2:        #0e1628;   /* surface 2 – cards */
-  --s3:        #121d34;   /* surface 3 – input bg */
-  --b1:        #16243e;   /* border base */
-  --b2:        #1f3356;   /* border elevated */
-  --b3:        #2a4470;   /* border active */
+  /* Surfaces */
+  --bg:   #03060e;
+  --s0:   #060a15;
+  --s1:   #08101e;
+  --s2:   #0c1628;
+  --s3:   #101d32;
+  --s4:   #16243e;
 
-  --blue:      #29b6f6;
-  --blue-b:    #4fc3f7;
-  --blue-g:    rgba(41,182,246,.12);
-  --blue-d:    rgba(41,182,246,.06);
+  /* Borders */
+  --b0:   #0f1c30;
+  --b1:   #152540;
+  --b2:   #1c3052;
+  --b3:   #243d68;
 
-  --green:     #00e676;
-  --green-g:   rgba(0,230,118,.10);
-  --amber:     #ffca28;
-  --amber-g:   rgba(255,202,40,.10);
-  --red:       #ff5252;
-  --red-g:     rgba(255,82,82,.10);
-  --purple:    #b39ddb;
+  /* Brand */
+  --sky:    #38bdf8;
+  --sky-d:  #0ea5e9;
+  --sky-g:  rgba(56,189,248,.10);
+  --sky-s:  rgba(56,189,248,.05);
 
-  --tx:        #8dadc8;    /* body text */
-  --tx2:       #c8dff0;    /* secondary bright */
-  --tx3:       #e8f4ff;    /* heading / value */
-  --txm:       #3a5570;    /* muted */
+  /* Status */
+  --go:   #34d399;
+  --go-g: rgba(52,211,153,.10);
+  --warn: #fbbf24;
+  --warn-g:rgba(251,191,36,.10);
+  --bad:  #f87171;
+  --bad-g:rgba(248,113,113,.10);
+  --purple:#a78bfa;
 
-  --font:      'Inter', sans-serif;
-  --mono:      'JetBrains Mono', monospace;
-  --r-sm:      8px;
-  --r-md:      12px;
-  --r-lg:      16px;
+  /* Text */
+  --t0:   #eef6ff;
+  --t1:   #b8d4ee;
+  --t2:   #6a92b5;
+  --t3:   #2e4a62;
+
+  /* 3D depth layers */
+  --d1: rgba(0,0,0,.7);
+  --d2: rgba(0,0,0,.5);
+  --d3: rgba(0,0,0,.35);
+  --edge-sky: rgba(56,189,248,.12);
+
+  /* Typography */
+  --f:  'Inter', system-ui, sans-serif;
+  --m:  'JetBrains Mono', monospace;
+
+  /* Radius */
+  --r4:  4px; --r8:  8px; --r12: 12px;
+  --r16: 16px; --r20: 20px;
+
+  /* 3D shadows */
+  --float-shadow:
+    0 2px 0 rgba(0,0,0,.8),
+    0 6px 0 rgba(0,0,0,.5),
+    0 12px 0 rgba(0,0,0,.3),
+    0 24px 48px rgba(0,0,0,.8),
+    0 48px 80px rgba(0,0,0,.4);
+  --card-shadow:
+    0 1px 0 var(--b1),
+    0 3px 0 rgba(0,0,0,.6),
+    0 8px 20px rgba(0,0,0,.5);
+  --card-hover-shadow:
+    0 2px 0 var(--b3),
+    0 6px 0 rgba(0,0,0,.6),
+    0 12px 0 rgba(0,0,0,.3),
+    0 20px 40px rgba(0,0,0,.7),
+    0 0 30px rgba(56,189,248,.07);
 }
 
-/* ── Reset ─────────────────────────────────────────────────────── */
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:var(--font); background:var(--bg); color:var(--tx); height:100vh; display:flex; flex-direction:column; overflow:hidden; }
-::-webkit-scrollbar { width:4px; }
-::-webkit-scrollbar-track { background:transparent; }
-::-webkit-scrollbar-thumb { background:var(--b2); border-radius:4px; }
-::-webkit-scrollbar-thumb:hover { background:var(--b3); }
+/* ── Reset ── */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:var(--f);background:var(--bg);color:var(--t1);
+  height:100vh;display:flex;flex-direction:column;overflow:hidden;
+  -webkit-font-smoothing:antialiased;position:relative;
+}
+button{font-family:var(--f);cursor:pointer;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:3px;}
 
-/* ── HEADER ─────────────────────────────────────────────────────── */
-header {
-  height:58px;
-  display:flex; align-items:center; justify-content:space-between;
-  padding:0 20px;
-  background:linear-gradient(180deg, #0d1828 0%, var(--s1) 100%);
+/* ── 3D floor grid background ── */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    linear-gradient(rgba(56,189,248,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(56,189,248,.025) 1px,transparent 1px);
+  background-size:44px 44px;
+  transform:perspective(500px) rotateX(55deg) scaleX(1.8) translateY(-35%);
+  transform-origin:center top;
+  mask-image:linear-gradient(to bottom,transparent 0%,black 30%,black 70%,transparent 100%);
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 30%,black 70%,transparent 100%);
+}
+/* radial ambient glow */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(56,189,248,.04) 0%,transparent 70%);
+}
+
+/* ═══════════════════════════════════════════════
+   HEADER — 3D extruded bar
+═══════════════════════════════════════════════ */
+header{
+  height:58px;display:flex;align-items:center;
+  background:linear-gradient(180deg,var(--s1) 0%,var(--s0) 100%);
   border-bottom:1px solid var(--b1);
-  flex-shrink:0; z-index:200; gap:16px;
-  position:relative;
+  flex-shrink:0;z-index:300;position:relative;
+  box-shadow:
+    0 1px 0 var(--b2),
+    0 4px 0 rgba(0,0,0,.6),
+    0 8px 0 rgba(0,0,0,.4),
+    0 16px 32px rgba(0,0,0,.5);
 }
-header::after {
-  content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
-  background:linear-gradient(90deg, transparent, var(--blue) 40%, var(--blue) 60%, transparent);
-  opacity:.3;
+header::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,transparent 0%,rgba(56,189,248,.04) 40%,rgba(167,139,250,.03) 70%,transparent 100%);
 }
 
 /* Logo */
-.logo { display:flex; align-items:center; gap:10px; white-space:nowrap; }
-.logo-icon {
-  width:36px; height:36px; border-radius:10px; flex-shrink:0;
-  background:linear-gradient(135deg,#0277bd,#29b6f6);
-  display:flex; align-items:center; justify-content:center; font-size:18px;
-  box-shadow:0 0 20px rgba(41,182,246,.35), 0 0 40px rgba(41,182,246,.12);
+.h-logo{
+  display:flex;align-items:center;gap:11px;
+  padding:0 22px;border-right:1px solid var(--b1);height:100%;flex-shrink:0;
 }
-.logo-text { line-height:1; }
-.logo-name { font-size:18px; font-weight:800; color:var(--tx3); letter-spacing:-.3px; }
-.logo-name span { color:var(--blue-b); }
-.logo-city { font-family:var(--mono); font-size:9px; color:var(--txm); letter-spacing:2px; text-transform:uppercase; margin-top:2px; }
+.h-logo-icon{
+  width:36px;height:36px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(145deg,#0c4a7c,#38bdf8);
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.08) inset,
+    0 -2px 0 rgba(0,0,0,.4) inset,
+    0 0 0 1px rgba(56,189,248,.3),
+    0 4px 0 #041222,
+    0 8px 16px rgba(56,189,248,.25);
+  transform:perspective(200px) rotateX(8deg);
+}
+.h-logo-text .name{font-size:17px;font-weight:800;color:var(--t0);letter-spacing:-.4px;line-height:1.1;}
+.h-logo-text .name em{font-style:normal;color:var(--sky);text-shadow:0 0 20px rgba(56,189,248,.6);}
+.h-logo-text .city{font-family:var(--m);font-size:8px;color:var(--t3);letter-spacing:2.5px;text-transform:uppercase;}
 
-/* Mode badge */
-.mode-pill {
-  display:flex; align-items:center; gap:7px;
-  font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:1px;
-  padding:5px 12px; border-radius:20px; white-space:nowrap; transition:all .4s; cursor:default;
+/* Mode pill */
+.h-mode{display:flex;align-items:center;gap:8px;padding:0 18px;height:100%;border-right:1px solid var(--b1);flex-shrink:0;}
+.mode-pill{
+  display:flex;align-items:center;gap:7px;font-family:var(--m);
+  font-size:10px;font-weight:600;letter-spacing:1px;
+  padding:5px 12px;border-radius:var(--r20);transition:all .4s;user-select:none;
+  box-shadow:0 2px 0 rgba(0,0,0,.5),0 4px 10px rgba(0,0,0,.4);
 }
-.mode-pill.sim  { color:var(--amber); background:var(--amber-g); border:1px solid rgba(255,202,40,.2); }
-.mode-pill.live { color:var(--green); background:var(--green-g); border:1px solid rgba(0,230,118,.2); }
-.mode-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; position:relative; }
-.mode-pill.sim  .mode-dot { background:var(--amber); animation:pulse-amber 2s infinite; }
-.mode-pill.live .mode-dot { background:var(--green);  animation:pulse-green 2s infinite; }
-@keyframes pulse-amber {
-  0%,100%{ box-shadow:0 0 0 0 rgba(255,202,40,.5); }
-  50%     { box-shadow:0 0 0 5px rgba(255,202,40,0); }
+.mode-pill.sim {color:var(--warn);background:var(--warn-g);border:1px solid rgba(251,191,36,.25);}
+.mode-pill.live{color:var(--go);  background:var(--go-g);  border:1px solid rgba(52,211,153,.25);}
+.mdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.mode-pill.sim  .mdot{background:var(--warn);animation:pa 2s ease infinite;}
+.mode-pill.live .mdot{background:var(--go);  animation:pg 2s ease infinite;}
+@keyframes pa{0%,100%{box-shadow:0 0 0 0 rgba(251,191,36,.6);}60%{box-shadow:0 0 0 7px rgba(251,191,36,0);}}
+@keyframes pg{0%,100%{box-shadow:0 0 0 0 rgba(52,211,153,.6);}60%{box-shadow:0 0 0 7px rgba(52,211,153,0);}}
+
+/* KPI strip */
+.h-kpis{display:flex;align-items:stretch;margin-left:auto;}
+.kpi-cell{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:0 18px;border-left:1px solid var(--b1);gap:2px;min-width:72px;
+  transition:background .15s;cursor:default;
 }
-@keyframes pulse-green {
-  0%,100%{ box-shadow:0 0 0 0 rgba(0,230,118,.5); }
-  50%     { box-shadow:0 0 0 5px rgba(0,230,118,0); }
+.kpi-cell:hover{background:rgba(56,189,248,.04);}
+.kv{
+  font-family:var(--m);font-size:22px;font-weight:600;line-height:1;letter-spacing:-1px;
+  text-shadow:0 0 20px currentColor;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.5));
+}
+.kl{font-family:var(--m);font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:1.3px;}
+.h-clock{
+  display:flex;align-items:center;justify-content:center;
+  padding:0 20px;border-left:1px solid var(--b1);
+  font-family:var(--m);font-size:15px;font-weight:600;
+  color:var(--sky);letter-spacing:.5px;flex-shrink:0;
+  background:var(--sky-s);
+  text-shadow:0 0 16px rgba(56,189,248,.7);
 }
 
-/* KPIs */
-.hkpis { display:flex; align-items:center; gap:2px; flex-shrink:0; }
-.kpi {
-  display:flex; flex-direction:column; align-items:center;
-  padding:4px 14px; border-radius:var(--r-sm); min-width:70px;
-  transition:background .2s;
-}
-.kpi:hover { background:var(--s2); }
-.kpiv { font-family:var(--mono); font-size:22px; font-weight:600; line-height:1; letter-spacing:-1px; }
-.kpil { font-size:8.5px; color:var(--txm); letter-spacing:1.2px; text-transform:uppercase; margin-top:3px; }
-.kpi-div { width:1px; height:28px; background:var(--b1); margin:0 2px; }
-.clk {
-  font-family:var(--mono); font-size:16px; font-weight:600; color:var(--blue-b);
-  padding:6px 14px; border-radius:var(--r-sm);
-  background:var(--blue-d); border:1px solid rgba(41,182,246,.15);
-  letter-spacing:.5px; white-space:nowrap;
-}
+/* ═══════════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════════ */
+.main{display:flex;flex:1;overflow:hidden;position:relative;z-index:1;}
 
-/* ── LAYOUT ─────────────────────────────────────────────────────── */
-.main { display:flex; flex:1; overflow:hidden; }
-
-/* ── SIDEBAR ─────────────────────────────────────────────────────── */
-.sidebar {
-  width:330px; background:var(--s1);
+/* ═══════════════════════════════════════════════
+   SIDEBAR — 3D wall depth
+═══════════════════════════════════════════════ */
+.sidebar{
+  width:342px;flex-shrink:0;
+  background:linear-gradient(180deg,var(--s0) 0%,var(--bg) 100%);
   border-right:1px solid var(--b1);
-  display:flex; flex-direction:column; overflow:hidden; flex-shrink:0;
+  display:flex;flex-direction:column;overflow:hidden;
+  position:relative;
+  box-shadow:
+    4px 0 0 rgba(0,0,0,.5),
+    8px 0 0 rgba(0,0,0,.3),
+    20px 0 40px rgba(0,0,0,.5);
+}
+.sidebar::after{
+  content:'';position:absolute;top:0;right:-1px;bottom:0;width:1px;
+  background:linear-gradient(to bottom,transparent,rgba(56,189,248,.08) 30%,rgba(56,189,248,.08) 70%,transparent);
+  pointer-events:none;
 }
 
-/* Tabs */
-.sbtabs {
-  display:flex; gap:4px; padding:8px 10px;
-  border-bottom:1px solid var(--b1); background:var(--s1);
+/* ── Tabs ── */
+.tabs{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--b1);flex-shrink:0;background:var(--s0);}
+.tab{
+  padding:14px 4px;text-align:center;
+  font-family:var(--m);font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--t3);border:none;background:none;
+  transition:all .2s;border-bottom:2px solid transparent;position:relative;
 }
-.sbt {
-  flex:1; padding:7px 4px; text-align:center;
-  font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.5px; text-transform:uppercase;
-  color:var(--txm); cursor:pointer; border-radius:var(--r-sm);
-  transition:all .2s; border:1px solid transparent;
+.tab:hover{color:var(--t1);background:rgba(56,189,248,.03);}
+.tab.on{
+  color:var(--sky);border-bottom-color:var(--sky);
+  background:linear-gradient(180deg,rgba(56,189,248,.06) 0%,transparent 100%);
+  text-shadow:0 0 12px rgba(56,189,248,.5);
 }
-.sbt:hover { color:var(--tx2); background:var(--s2); }
-.sbt.on { color:var(--blue-b); background:var(--blue-d); border-color:rgba(41,182,246,.2); }
-.sbpane { display:none; flex-direction:column; overflow:hidden; flex:1; }
-.sbpane.on { display:flex; }
+/* 3D pressed inset for active tab */
+.tab.on::before{
+  content:'';position:absolute;inset:0 0 0 0;pointer-events:none;
+  box-shadow:0 1px 0 rgba(56,189,248,.15) inset,0 -1px 0 rgba(0,0,0,.3) inset;
+}
+.pane{display:none;flex-direction:column;overflow:hidden;flex:1;}
+.pane.on{display:flex;}
 
-/* ─ Routes pane */
-.rlist { overflow-y:auto; flex:1; padding:8px; display:flex; flex-direction:column; gap:5px; }
-.ritem {
-  border:1px solid var(--b1); border-radius:var(--r-md);
-  overflow:hidden; cursor:pointer; transition:all .2s;
-  background:var(--s2);
-}
-.ritem:hover { border-color:var(--b3); background:var(--s3); transform:translateX(2px); }
-.ritem.dim { opacity:.25; }
-.rhead { display:flex; align-items:center; justify-content:space-between; padding:10px 12px 6px; }
-.rnum {
-  font-family:var(--mono); font-size:20px; font-weight:700; line-height:1;
-}
-.rnum-meta { font-family:var(--mono); font-size:9px; color:var(--txm); margin-left:6px; }
-.rtoggle {
-  width:36px; height:20px; border-radius:10px; cursor:pointer;
-  transition:all .25s; position:relative; border:none; outline:none; flex-shrink:0;
-}
-.rtoggle::after {
-  content:''; position:absolute; width:16px; height:16px; border-radius:8px;
-  background:#fff; top:2px; transition:all .25s; box-shadow:0 1px 3px rgba(0,0,0,.3);
-}
-.rtoggle.on::after { right:2px; }
-.rtoggle.off { background:var(--b2) !important; }
-.rtoggle.off::after { left:2px; }
-.rpath { font-size:10px; color:var(--txm); padding:0 12px 8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.sstrip { display:flex; align-items:center; padding:0 12px 10px; gap:0; overflow-x:auto; scrollbar-width:none; }
-.sstrip::-webkit-scrollbar { display:none; }
-.snode { display:flex; flex-direction:column; align-items:center; gap:2px; flex-shrink:0; }
-.sdot { width:8px; height:8px; border-radius:50%; border:2px solid; }
-.sname { font-size:7px; color:var(--txm); white-space:nowrap; max-width:46px; overflow:hidden; text-overflow:ellipsis; text-align:center; font-family:var(--mono); }
-.sline { width:16px; height:2px; margin-top:3px; flex-shrink:0; opacity:.5; }
+/* ── ROUTES PANE ── */
+.route-scroll{overflow-y:auto;flex:1;padding:10px;}
+.route-scroll::-webkit-scrollbar{width:2px;}
 
-/* ─ Fleet pane */
-.fsearch { padding:8px; border-bottom:1px solid var(--b1); }
-.fsearch input {
-  width:100%; background:var(--s3); border:1px solid var(--b1);
-  border-radius:var(--r-sm); padding:8px 12px; color:var(--tx2);
-  font-size:12px; font-family:var(--mono); outline:none; transition:border-color .2s;
+.rcard{
+  display:flex;align-items:center;gap:13px;
+  padding:12px 13px;border-radius:var(--r12);
+  border:1px solid var(--b1);
+  background:linear-gradient(135deg,var(--s2) 0%,var(--s1) 100%);
+  margin-bottom:7px;cursor:pointer;
+  transform:perspective(800px) rotateX(1deg) translateZ(0);
+  transform-style:preserve-3d;
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),
+             box-shadow .25s ease,border-color .2s;
+  box-shadow:var(--card-shadow);
+  position:relative;overflow:hidden;
 }
-.fsearch input:focus { border-color:var(--b3); }
-.fsearch input::placeholder { color:var(--txm); }
-.flist { overflow-y:auto; flex:1; padding:8px; display:flex; flex-direction:column; gap:5px; }
+.rcard::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--rc,#38bdf8);border-radius:2px 0 0 2px;
+}
+.rcard::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.03) 0%,transparent 60%);
+  border-radius:inherit;
+}
+.rcard:hover{
+  transform:perspective(800px) rotateX(-2deg) translateZ(10px) translateX(3px);
+  border-color:var(--b3);
+  box-shadow:var(--card-hover-shadow);
+}
+.rcard.dim{opacity:.28;}
 
-/* Fleet card */
-.bcard {
-  border:1px solid var(--b1); border-radius:var(--r-md); padding:10px 12px 10px 16px;
-  cursor:pointer; transition:all .18s; position:relative; overflow:hidden;
-  background:var(--s2);
+.rcard-dot{
+  width:32px;height:32px;border-radius:var(--r8);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--m);font-size:13px;font-weight:700;color:#fff;
+  background:var(--rc,#38bdf8);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.15) inset,
+    0 -2px 0 rgba(0,0,0,.3) inset,
+    0 3px 0 rgba(0,0,0,.5),
+    0 6px 12px color-mix(in srgb,var(--rc,#38bdf8) 40%,transparent);
+  transform:perspective(200px) rotateX(6deg) translateZ(2px);
 }
-.bcard::before {
-  content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
-  border-radius:2px 0 0 2px;
-  background:inherit; /* set dynamically via style attribute on the ::before via JS */
+.rcard-info{flex:1;min-width:0;}
+.rcard-num{font-size:14px;font-weight:700;color:var(--t0);line-height:1.2;}
+.rcard-route{font-size:11px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+.rcard-meta{font-family:var(--m);font-size:9px;color:var(--t3);margin-top:3px;}
+.rcard-toggle{
+  width:38px;height:21px;border-radius:11px;
+  flex-shrink:0;border:none;outline:none;cursor:pointer;transition:all .22s;position:relative;
+  box-shadow:0 2px 0 rgba(0,0,0,.5),0 1px 0 rgba(0,0,0,.3) inset;
 }
-.bcard:hover { border-color:var(--b3); background:var(--s3); transform:translateX(2px); }
-.bcard.sel { border-color:rgba(41,182,246,.4); background:var(--blue-d); }
-.bc1 { display:flex; align-items:center; justify-content:space-between; margin-bottom:5px; }
-.bcname { font-size:12px; font-weight:700; color:var(--tx3); letter-spacing:-.1px; }
-.bctag { font-family:var(--mono); font-size:9px; font-weight:600; padding:2px 7px; border-radius:5px; }
-.bcdest { font-size:10.5px; color:var(--tx); margin-bottom:6px; }
-.bc2 { display:flex; gap:10px; margin-bottom:5px; flex-wrap:wrap; }
-.bcstat { font-family:var(--mono); font-size:10px; color:var(--txm); display:flex; align-items:center; gap:3px; }
-.bcnext { font-family:var(--mono); font-size:9px; color:var(--txm); margin-bottom:2px; }
-.bceta  { font-family:var(--mono); font-size:9px; color:var(--txm); margin-bottom:5px; }
-.occbar { height:3px; background:var(--b1); border-radius:3px; overflow:hidden; }
-.occfill { height:100%; border-radius:3px; transition:width .6s; }
+.rcard-toggle::after{
+  content:'';position:absolute;width:17px;height:17px;border-radius:9px;
+  background:linear-gradient(145deg,#fff,#d0d8e0);
+  top:2px;transition:all .22s;
+  box-shadow:0 1px 4px rgba(0,0,0,.5),0 2px 0 rgba(0,0,0,.3);
+}
+.rcard-toggle.on::after{right:2px;}
+.rcard-toggle.off{background:var(--b2) !important;box-shadow:0 1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.03) inset;}
+.rcard-toggle.off::after{left:2px;}
 
-/* ─ Alerts pane */
-.alerts-pane { display:flex; flex-direction:column; overflow:hidden; flex:1; }
-.alerts-header {
-  padding:12px 14px; border-bottom:1px solid var(--b1);
-  font-size:11px; color:var(--tx); line-height:1.6;
-  background:linear-gradient(135deg, var(--blue-d), transparent);
+/* ── FLEET PANE ── */
+.fleet-search{
+  padding:10px;border-bottom:1px solid var(--b1);flex-shrink:0;position:relative;
+  background:var(--s0);
 }
-.alerts-header b { color:var(--blue-b); }
-.sub-list { overflow-y:auto; flex:1; padding:8px; }
-.sub-item {
-  border:1px solid var(--b1); border-radius:var(--r-md); padding:10px 36px 10px 12px;
-  margin-bottom:6px; background:var(--s2); position:relative; transition:border-color .2s;
+.fleet-search svg{
+  position:absolute;left:20px;top:50%;transform:translateY(-50%);
+  width:14px;height:14px;color:var(--t3);pointer-events:none;
 }
-.sub-item:hover { border-color:var(--b2); }
-.sub-item-stop { font-size:12px; font-weight:600; color:var(--tx3); margin-bottom:3px; }
-.sub-item-meta { font-family:var(--mono); font-size:9px; color:var(--txm); line-height:1.6; }
-.sub-remove {
-  position:absolute; right:8px; top:50%; transform:translateY(-50%);
-  cursor:pointer; color:var(--txm); font-size:14px; line-height:1;
-  padding:4px 6px; border-radius:6px; background:transparent; border:none; transition:all .15s;
+.fleet-search input{
+  width:100%;
+  background:linear-gradient(135deg,var(--s2),var(--s1));
+  border:1px solid var(--b2);border-radius:var(--r8);
+  padding:9px 12px 9px 34px;color:var(--t0);font-size:12px;font-family:var(--f);
+  outline:none;transition:all .2s;
+  box-shadow:0 2px 0 rgba(0,0,0,.4) inset,0 1px 0 rgba(255,255,255,.03);
 }
-.sub-remove:hover { color:var(--red); background:var(--red-g); }
-.no-subs { text-align:center; padding:36px 16px; color:var(--txm); font-size:11px; font-family:var(--mono); line-height:2; }
-.no-subs-icon { font-size:32px; display:block; margin-bottom:10px; opacity:.5; }
-.traffic-alerts { border-top:1px solid var(--b1); padding:10px; }
-.traffic-label { font-family:var(--mono); font-size:9px; color:var(--txm); letter-spacing:1.2px; text-transform:uppercase; margin-bottom:6px; }
-.ta-chip {
-  background:var(--amber-g); border:1px solid rgba(255,202,40,.15);
-  border-radius:6px; padding:5px 9px; font-family:var(--mono); font-size:9px;
-  color:var(--amber); margin-bottom:4px; line-height:1.4;
+.fleet-search input:focus{border-color:var(--sky);box-shadow:0 2px 0 rgba(0,0,0,.4) inset,0 0 0 2px rgba(56,189,248,.1);}
+.fleet-search input::placeholder{color:var(--t3);}
+.fleet-scroll{overflow-y:auto;flex:1;padding:10px;}
+.fleet-scroll::-webkit-scrollbar{width:2px;}
+
+.bcard{
+  border:1px solid var(--b1);border-radius:var(--r12);
+  padding:12px 12px 10px 15px;cursor:pointer;
+  background:linear-gradient(135deg,var(--s2) 0%,var(--s1) 100%);
+  margin-bottom:8px;
+  transform:perspective(900px) rotateX(1.5deg) translateZ(0);
+  transform-style:preserve-3d;
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),
+             box-shadow .25s ease,border-color .2s;
+  box-shadow:var(--card-shadow);
+  position:relative;overflow:hidden;
+}
+.bcard::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);
+  pointer-events:none;
+}
+.bcard-bar{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:2px 0 0 2px;}
+.bcard:hover{
+  transform:perspective(900px) rotateX(-2deg) translateZ(12px) translateX(2px);
+  border-color:var(--b3);
+  box-shadow:var(--card-hover-shadow);
+}
+.bcard.sel{
+  background:linear-gradient(135deg,rgba(56,189,248,.08),var(--s2));
+  border-color:rgba(56,189,248,.35);
+  box-shadow:
+    0 0 0 1px rgba(56,189,248,.15),
+    0 4px 0 rgba(0,0,0,.5),
+    0 12px 28px rgba(0,0,0,.6),
+    0 0 20px rgba(56,189,248,.08);
 }
 
-/* ── MAP ────────────────────────────────────────────────────────── */
-.mapwrap { flex:1; position:relative; overflow:hidden; }
-#map { width:100%; height:100%; }
-.leaflet-tile-pane { filter:brightness(.38) saturate(.3) hue-rotate(195deg); }
+.bcard-row1{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.bcard-name{font-size:12.5px;font-weight:700;color:var(--t0);}
+.bcard-badges{display:flex;gap:5px;align-items:center;}
+.badge{
+  font-family:var(--m);font-size:9px;font-weight:600;padding:2px 7px;border-radius:var(--r4);
+  box-shadow:0 1px 0 rgba(0,0,0,.4),0 1px 0 rgba(255,255,255,.04) inset;
+}
+.badge-route{background:var(--rc-bg,rgba(56,189,248,.12));color:var(--rc,#38bdf8);}
+.badge-gps{background:var(--go-g);color:var(--go);border:1px solid rgba(52,211,153,.2);}
+.bcard-dest{font-size:11px;color:var(--t2);margin-bottom:8px;}
+.bcard-dest span{color:var(--t0);font-weight:500;}
+.bcard-stats{display:flex;gap:0;margin-bottom:8px;}
+.bstat{
+  display:flex;align-items:center;gap:4px;
+  font-family:var(--m);font-size:10px;color:var(--t2);
+  padding-right:11px;margin-right:11px;border-right:1px solid var(--b1);
+}
+.bstat:last-child{border:none;padding:0;margin:0;}
+.bstat-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;box-shadow:0 0 6px currentColor;}
+.bcard-next{font-size:10px;color:var(--t2);margin-bottom:6px;}
+.bcard-next strong{color:var(--warn);}
+.bcard-occ{display:flex;align-items:center;gap:8px;}
+.occ-bar{
+  flex:1;height:4px;
+  background:var(--b1);border-radius:2px;overflow:hidden;
+  box-shadow:0 1px 0 rgba(0,0,0,.4) inset;
+}
+.occ-fill{height:100%;border-radius:2px;transition:width .6s;box-shadow:0 0 6px currentColor;}
+.occ-pct{font-family:var(--m);font-size:9px;color:var(--t3);flex-shrink:0;width:26px;text-align:right;}
 
-/* ── STOP ARRIVAL BOARD (bottom-left glass card) ─────────────────── */
-.stopbox {
-  position:absolute; bottom:20px; left:18px; z-index:600;
-  width:300px;
-  background:rgba(10,16,32,.82);
-  backdrop-filter:blur(20px) saturate(1.5);
-  -webkit-backdrop-filter:blur(20px) saturate(1.5);
-  border:1px solid var(--b2); border-radius:var(--r-lg);
+/* ── ALERTS PANE ── */
+.alerts-pane{display:flex;flex-direction:column;overflow:hidden;flex:1;}
+.alerts-intro{
+  padding:14px 14px 12px;border-bottom:1px solid var(--b1);
+  background:linear-gradient(135deg,rgba(56,189,248,.05),transparent);flex-shrink:0;
+}
+.alerts-intro p{font-size:12px;color:var(--t1);line-height:1.6;}
+.alerts-intro p b{color:var(--sky);}
+.alerts-intro .hint{
+  margin-top:8px;display:flex;align-items:center;gap:6px;
+  font-family:var(--m);font-size:10px;color:var(--t3);
+}
+.hint-bell{
+  width:22px;height:22px;border-radius:var(--r4);
+  background:var(--warn-g);border:1px solid rgba(251,191,36,.2);
+  display:flex;align-items:center;justify-content:center;font-size:11px;
+  box-shadow:0 2px 0 rgba(0,0,0,.4),0 1px 0 rgba(255,255,255,.05) inset;
+}
+.subs-scroll{overflow-y:auto;flex:1;padding:10px;}
+.sub-card{
+  border:1px solid var(--b2);border-radius:var(--r8);padding:11px 38px 11px 12px;
+  background:linear-gradient(135deg,var(--s2),var(--s1));
+  margin-bottom:6px;position:relative;transition:all .2s;
+  box-shadow:0 2px 0 rgba(0,0,0,.4),0 4px 12px rgba(0,0,0,.3);
+}
+.sub-card:hover{border-color:var(--b3);transform:translateY(-1px);box-shadow:0 4px 0 rgba(0,0,0,.4),0 8px 20px rgba(0,0,0,.4);}
+.sub-card-stop{font-size:12px;font-weight:600;color:var(--t0);}
+.sub-card-meta{font-family:var(--m);font-size:9.5px;color:var(--t2);margin-top:4px;line-height:1.6;}
+.sub-del{
+  position:absolute;right:8px;top:50%;transform:translateY(-50%);
+  background:none;border:none;padding:5px;border-radius:var(--r4);
+  color:var(--t3);font-size:14px;line-height:1;transition:all .15s;
+}
+.sub-del:hover{color:var(--bad);background:var(--bad-g);}
+.no-subs{text-align:center;padding:40px 16px;color:var(--t3);}
+.no-subs-icon{font-size:36px;display:block;margin-bottom:12px;opacity:.4;}
+.no-subs p{font-size:11px;font-family:var(--m);line-height:2;}
+.traffic-section{border-top:1px solid var(--b1);padding:10px;flex-shrink:0;}
+.section-label{font-family:var(--m);font-size:8.5px;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);margin-bottom:8px;}
+.tchip{
+  background:var(--warn-g);border:1px solid rgba(251,191,36,.15);
+  border-radius:var(--r4);padding:5px 9px;font-family:var(--m);font-size:9px;
+  color:var(--warn);margin-bottom:4px;line-height:1.5;
+  box-shadow:0 2px 0 rgba(0,0,0,.4);
+}
+
+/* ═══════════════════════════════════════════════
+   MAP
+═══════════════════════════════════════════════ */
+.mapwrap{flex:1;position:relative;overflow:hidden;}
+#map{width:100%;height:100%;}
+.leaflet-tile-pane{filter:brightness(.3) saturate(.2) hue-rotate(200deg);}
+.leaflet-control-zoom a{
+  background:rgba(6,10,21,.92) !important;border-color:var(--b2) !important;
+  color:var(--t1) !important;
+  box-shadow:0 2px 0 rgba(0,0,0,.6),0 4px 12px rgba(0,0,0,.5) !important;
+}
+.leaflet-control-zoom a:hover{background:var(--s2) !important;color:var(--t0) !important;}
+
+/* notification chips */
+.alertswrap{
+  position:absolute;top:14px;left:14px;z-index:600;
+  display:flex;flex-direction:column;gap:6px;max-width:250px;pointer-events:none;
+}
+.achip{
+  background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-radius:var(--r8);padding:7px 12px;
+  font-family:var(--m);font-size:9px;color:var(--warn);line-height:1.5;
+  animation:cin .3s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 4px 0 rgba(0,0,0,.5),0 8px 20px rgba(0,0,0,.5);
+}
+.achip.blue{background:rgba(56,189,248,.06);border-color:rgba(56,189,248,.2);color:var(--sky);}
+@keyframes cin{from{opacity:0;transform:translateX(-12px) scale(.95);}to{opacity:1;transform:translateX(0) scale(1);}}
+
+/* sim speed */
+.speedbar{
+  position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:600;
+  background:rgba(6,10,21,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--b2);border-radius:var(--r20);
+  padding:7px 18px;display:flex;align-items:center;gap:12px;
+  font-family:var(--m);font-size:10px;color:var(--t2);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.04) inset,
+    0 4px 0 rgba(0,0,0,.6),
+    0 8px 0 rgba(0,0,0,.4),
+    0 16px 32px rgba(0,0,0,.6);
+}
+.speedbar input[type=range]{-webkit-appearance:none;width:90px;height:3px;background:var(--b2);border-radius:2px;outline:none;cursor:pointer;}
+.speedbar input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:14px;height:14px;border-radius:7px;
+  background:linear-gradient(145deg,#5fd0ff,#0ea5e9);
+  cursor:pointer;
+  box-shadow:0 0 10px rgba(56,189,248,.6),0 2px 4px rgba(0,0,0,.5);
+}
+.speedbar input[type=range]:disabled{opacity:.35;cursor:not-allowed;}
+.spd-val{color:var(--sky);font-weight:600;min-width:24px;text-shadow:0 0 12px rgba(56,189,248,.6);}
+
+/* ═══════════════════════════════════════════════
+   STOP ARRIVAL BOARD — 3D floating card
+═══════════════════════════════════════════════ */
+.stopbox{
+  position:absolute;bottom:18px;left:16px;z-index:700;
+  width:318px;
+  background:linear-gradient(160deg,rgba(10,16,32,.96) 0%,rgba(6,10,21,.98) 100%);
+  backdrop-filter:blur(24px) saturate(1.8);-webkit-backdrop-filter:blur(24px) saturate(1.8);
+  border:1px solid var(--b2);border-radius:var(--r16);
   overflow:hidden;
-  box-shadow:0 24px 64px rgba(0,0,0,.7), 0 0 0 1px rgba(41,182,246,.06);
-  display:none; animation:slideUp .22s ease;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.05) inset,
+    0 4px 0 rgba(0,0,0,.7),
+    0 8px 0 rgba(0,0,0,.5),
+    0 16px 0 rgba(0,0,0,.3),
+    0 32px 64px rgba(0,0,0,.8),
+    0 0 0 1px rgba(56,189,248,.06);
+  display:none;
+  animation:floatUp .3s cubic-bezier(.34,1.56,.64,1);
 }
-.stopbox.show { display:block; }
-@keyframes slideUp {
-  from { opacity:0; transform:translateY(12px); }
-  to   { opacity:1; transform:translateY(0); }
+.stopbox.show{display:block;}
+@keyframes floatUp{
+  from{opacity:0;transform:perspective(800px) rotateX(8deg) translateY(20px) scale(.97);}
+  to{opacity:1;transform:perspective(800px) rotateX(0deg) translateY(0) scale(1);}
 }
-.stophead {
-  padding:12px 14px 10px;
-  border-bottom:1px solid var(--b1);
-  background:linear-gradient(135deg, rgba(41,182,246,.06), transparent);
-  display:flex; align-items:flex-start; justify-content:space-between; gap:8px;
-}
-.stop-head-info { flex:1; min-width:0; }
-.stopname { font-size:14px; font-weight:700; color:var(--tx3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.stop-routetag { font-family:var(--mono); font-size:9px; color:var(--txm); margin-top:2px; letter-spacing:.5px; }
-.stophead-actions { display:flex; gap:6px; align-items:center; flex-shrink:0; }
-.alert-btn {
-  background:var(--amber-g); border:1px solid rgba(255,202,40,.25);
-  border-radius:6px; padding:4px 9px; font-family:var(--mono); font-size:9px;
-  font-weight:600; color:var(--amber); cursor:pointer; letter-spacing:.3px;
-  transition:all .15s; white-space:nowrap;
-}
-.alert-btn:hover { background:rgba(255,202,40,.2); }
-.iclose {
-  cursor:pointer; color:var(--txm); font-size:16px; line-height:1;
-  padding:3px 5px; border-radius:6px; transition:all .15s; background:none; border:none;
-}
-.iclose:hover { color:var(--tx2); background:var(--s3); }
-.stop-arrivals-label {
-  padding:8px 14px 4px;
-  font-family:var(--mono); font-size:8.5px; color:var(--txm); letter-spacing:1.5px; text-transform:uppercase;
-}
-.arrivals-list { padding:4px 8px 10px; display:flex; flex-direction:column; gap:3px; }
-.arrival-row {
-  display:flex; align-items:center; gap:8px; padding:6px 8px;
-  border-radius:var(--r-sm); transition:background .15s; cursor:default;
-}
-.arrival-row:hover { background:rgba(255,255,255,.03); }
-.arrival-routetag { font-family:var(--mono); font-size:10px; font-weight:700; padding:3px 8px; border-radius:5px; white-space:nowrap; min-width:34px; text-align:center; }
-.arrival-bus { font-size:10px; color:var(--tx); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.arrival-right { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
-.eta-chip { font-family:var(--mono); font-size:10px; font-weight:700; padding:2px 8px; border-radius:5px; white-space:nowrap; }
-.eta-now  { background:var(--green-g); color:var(--green); border:1px solid rgba(0,230,118,.25); }
-.eta-soon { background:var(--amber-g); color:var(--amber); border:1px solid rgba(255,202,40,.2); }
-.eta-later{ background:rgba(22,36,62,.6);  color:var(--txm);  border:1px solid var(--b1); }
-.arrival-occ { font-family:var(--mono); font-size:8px; }
-.no-arrivals { text-align:center; padding:18px; color:var(--txm); font-family:var(--mono); font-size:10px; }
 
-/* ── BUS INFO PANEL (bottom-right glass card) ────────────────────── */
-.infobox {
-  position:absolute; bottom:20px; right:18px; z-index:600;
-  width:278px;
-  background:rgba(10,16,32,.82);
-  backdrop-filter:blur(20px) saturate(1.5);
-  -webkit-backdrop-filter:blur(20px) saturate(1.5);
-  border:1px solid var(--b2); border-radius:var(--r-lg);
+.sb-head{
+  padding:14px 15px 12px;
+  background:linear-gradient(135deg,rgba(56,189,248,.07),rgba(56,189,248,.02));
+  border-bottom:1px solid var(--b1);
+  display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+}
+.sb-head-left{flex:1;min-width:0;}
+.sb-stop-name{font-size:14px;font-weight:700;color:var(--t0);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-stop-meta{font-family:var(--m);font-size:9px;color:var(--t3);margin-top:3px;letter-spacing:.3px;}
+.sb-actions{display:flex;gap:6px;align-items:center;flex-shrink:0;}
+.bell-btn{
+  display:flex;align-items:center;gap:5px;
+  background:linear-gradient(135deg,rgba(251,191,36,.12),rgba(251,191,36,.06));
+  border:1px solid rgba(251,191,36,.25);border-radius:var(--r8);
+  padding:5px 11px;font-family:var(--m);font-size:9px;font-weight:600;color:var(--warn);
+  transition:all .15s;letter-spacing:.3px;
+  box-shadow:0 2px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.04) inset;
+}
+.bell-btn:hover{background:linear-gradient(135deg,rgba(251,191,36,.2),rgba(251,191,36,.1));transform:translateY(-1px);box-shadow:0 3px 0 rgba(0,0,0,.5);}
+.x-btn{
+  width:27px;height:27px;border-radius:var(--r8);border:1px solid var(--b2);
+  background:rgba(255,255,255,.03);color:var(--t3);font-size:15px;line-height:1;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+  box-shadow:0 2px 0 rgba(0,0,0,.4);
+}
+.x-btn:hover{background:var(--s3);color:var(--t0);transform:translateY(-1px);}
+.sb-label{padding:9px 14px 5px;font-family:var(--m);font-size:8.5px;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);}
+.arr-list{padding:4px 10px 12px;display:flex;flex-direction:column;gap:3px;}
+.arr-row{
+  display:flex;align-items:center;gap:10px;
+  padding:7px 9px;border-radius:var(--r8);transition:all .15s;
+  border:1px solid transparent;
+}
+.arr-row:hover{
+  background:rgba(56,189,248,.04);border-color:var(--b1);
+  transform:translateX(2px);
+}
+.arr-badge{
+  font-family:var(--m);font-size:10px;font-weight:700;
+  padding:3px 9px;border-radius:var(--r4);min-width:36px;text-align:center;flex-shrink:0;
+  box-shadow:0 2px 0 rgba(0,0,0,.4),0 1px 0 rgba(255,255,255,.06) inset;
+}
+.arr-info{flex:1;min-width:0;}
+.arr-bus{font-size:11px;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.arr-occ{font-family:var(--m);font-size:9px;margin-top:1px;}
+.arr-eta{flex-shrink:0;text-align:right;}
+.eta-pill{
+  font-family:var(--m);font-size:11px;font-weight:700;
+  padding:3px 9px;border-radius:var(--r4);display:inline-block;
+  box-shadow:0 2px 0 rgba(0,0,0,.4),0 1px 0 rgba(255,255,255,.06) inset;
+}
+.e-now {background:var(--go-g);  color:var(--go);  border:1px solid rgba(52,211,153,.25);}
+.e-soon{background:var(--warn-g);color:var(--warn);border:1px solid rgba(251,191,36,.22);}
+.e-far {background:rgba(16,24,40,.8);color:var(--t2);border:1px solid var(--b2);}
+.arr-empty{text-align:center;padding:20px;color:var(--t3);font-family:var(--m);font-size:10px;}
+
+/* ═══════════════════════════════════════════════
+   BUS INFO PANEL — 3D floating card
+═══════════════════════════════════════════════ */
+.infobox{
+  position:absolute;bottom:18px;right:16px;z-index:700;
+  width:292px;
+  background:linear-gradient(160deg,rgba(10,16,32,.96) 0%,rgba(6,10,21,.98) 100%);
+  backdrop-filter:blur(24px) saturate(1.8);-webkit-backdrop-filter:blur(24px) saturate(1.8);
+  border:1px solid var(--b2);border-radius:var(--r16);
   overflow:hidden;
-  box-shadow:0 24px 64px rgba(0,0,0,.7), 0 0 0 1px rgba(41,182,246,.06);
-  display:none; animation:slideUp .22s ease;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.05) inset,
+    0 4px 0 rgba(0,0,0,.7),
+    0 8px 0 rgba(0,0,0,.5),
+    0 16px 0 rgba(0,0,0,.3),
+    0 32px 64px rgba(0,0,0,.8),
+    0 0 0 1px rgba(56,189,248,.06);
+  display:none;
+  animation:floatUp .3s cubic-bezier(.34,1.56,.64,1);
 }
-.infobox.show { display:block; }
-.ihead {
-  padding:12px 14px; display:flex; align-items:center; justify-content:space-between;
+.infobox.show{display:block;}
+
+/* info header */
+.ih{
+  padding:13px 15px;display:flex;align-items:center;justify-content:space-between;
   border-bottom:1px solid var(--b1);
-  background:linear-gradient(135deg, rgba(41,182,246,.07), transparent);
+  background:linear-gradient(135deg,rgba(56,189,248,.08),transparent);
 }
-.ihead-left { display:flex; align-items:center; gap:8px; min-width:0; }
-.ibusid { font-size:15px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.gps-badge {
-  font-family:var(--mono); font-size:8px; padding:2px 6px; border-radius:4px;
-  background:var(--green-g); color:var(--green); border:1px solid rgba(0,230,118,.2);
-  letter-spacing:.5px; flex-shrink:0;
+.ih-left{display:flex;align-items:center;gap:8px;min-width:0;}
+.ibusid{font-size:15px;font-weight:800;color:var(--t0);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gps-badge{
+  font-family:var(--m);font-size:8px;padding:2px 7px;border-radius:var(--r4);
+  background:var(--go-g);color:var(--go);border:1px solid rgba(52,211,153,.2);flex-shrink:0;
+  box-shadow:0 1px 0 rgba(0,0,0,.4),0 0 8px rgba(52,211,153,.2);
 }
-.ijourney { margin:10px 14px 4px; }
-.ijlabel { font-family:var(--mono); font-size:8.5px; color:var(--txm); letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
-.ijtrack { position:relative; height:5px; background:var(--b1); border-radius:3px; margin:0 0 4px; }
-.ijfill { height:100%; border-radius:3px; transition:width .5s; }
-.ijthumb { position:absolute; top:-5px; width:14px; height:14px; border-radius:7px; border:2.5px solid var(--bg); transform:translateX(-50%); transition:left .5s; }
-.ijends { display:flex; justify-content:space-between; font-size:9px; color:var(--txm); font-family:var(--mono); }
-.ibody { padding:6px 14px 10px; overflow-y:auto; max-height:220px; }
-.irow { display:flex; justify-content:space-between; align-items:flex-start; padding:5px 0; border-bottom:1px solid rgba(22,36,62,.7); font-size:10.5px; }
-.irow:last-child { border:none; }
-.irk { color:var(--txm); font-family:var(--mono); font-size:9.5px; letter-spacing:.5px; text-transform:uppercase; flex-shrink:0; }
-.irv { font-weight:600; color:var(--tx3); text-align:right; max-width:155px; font-size:10.5px; }
-.eta-stops { margin:0 14px 12px; background:var(--s3); border-radius:var(--r-sm); padding:10px; border:1px solid var(--b1); }
-.eta-stops-label { font-family:var(--mono); font-size:8.5px; color:var(--txm); letter-spacing:1.2px; text-transform:uppercase; margin-bottom:7px; }
-.eta-stop-row { display:flex; align-items:center; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(22,36,62,.5); }
-.eta-stop-row:last-child { border:none; }
-.eta-stop-name { font-size:10px; color:var(--tx); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:145px; }
-.eta-stop-min  { font-family:var(--mono); font-size:10px; font-weight:600; flex-shrink:0; }
 
-/* ── ALERTS (map top-left) ──────────────────────────────────────── */
-.alertswrap { position:absolute; top:16px; left:16px; z-index:600; display:flex; flex-direction:column; gap:5px; max-width:230px; pointer-events:none; }
-.achip {
-  background:rgba(255,202,40,.08); border:1px solid rgba(255,202,40,.25);
-  border-radius:7px; padding:5px 10px; font-family:var(--mono); font-size:9px;
-  color:var(--amber); animation:slideIn .3s ease; line-height:1.5;
-  backdrop-filter:blur(8px);
+/* progress */
+.i-progress{margin:12px 14px 6px;}
+.i-prog-label{font-family:var(--m);font-size:8.5px;text-transform:uppercase;letter-spacing:1.2px;color:var(--t3);margin-bottom:6px;}
+.i-prog-track{
+  position:relative;height:6px;
+  background:var(--b1);border-radius:3px;
+  box-shadow:0 2px 0 rgba(0,0,0,.4) inset,0 1px 0 rgba(255,255,255,.03);
 }
-@keyframes slideIn { from{ opacity:0; transform:translateX(-10px); } to{ opacity:1; transform:translateX(0); } }
+.ijfill{height:100%;border-radius:3px;transition:width .5s;box-shadow:0 0 8px currentColor;}
+.ijthumb{
+  position:absolute;top:-5px;width:16px;height:16px;border-radius:8px;
+  border:2.5px solid var(--bg);transform:translateX(-50%);transition:left .5s;
+  box-shadow:0 0 10px currentColor,0 2px 4px rgba(0,0,0,.6);
+}
+.i-prog-ends{display:flex;justify-content:space-between;margin-top:5px;font-size:9px;font-family:var(--m);color:var(--t3);}
 
-/* ── SPEED BAR ──────────────────────────────────────────────────── */
-.speedbar {
-  position:absolute; bottom:20px; left:50%; transform:translateX(-50%); z-index:600;
-  background:rgba(10,16,32,.8); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
-  border:1px solid var(--b2); border-radius:var(--r-md);
-  padding:8px 16px; display:flex; align-items:center; gap:12px;
-  font-family:var(--mono); font-size:10px; color:var(--txm);
-  box-shadow:0 8px 32px rgba(0,0,0,.5);
+/* info grid */
+.i-grid{
+  padding:8px 14px;display:grid;grid-template-columns:1fr 1fr;gap:1px;
+  background:var(--b0);border-top:1px solid var(--b0);
 }
-.speedbar input[type=range] { -webkit-appearance:none; width:96px; height:3px; background:var(--b2); border-radius:2px; outline:none; cursor:pointer; }
-.speedbar input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:14px; height:14px; border-radius:7px; background:var(--blue); cursor:pointer; box-shadow:0 0 8px rgba(41,182,246,.5); }
-.speedbar input[type=range]:disabled { opacity:.4; cursor:not-allowed; }
-.spdv { color:var(--blue-b); font-weight:600; min-width:26px; }
+.ig-cell{
+  background:linear-gradient(135deg,var(--s2),var(--s1));
+  padding:8px 10px;transition:background .15s;
+}
+.ig-cell:hover{background:var(--s3);}
+.ig-k{font-family:var(--m);font-size:8px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:3px;}
+.ig-v{font-size:11.5px;font-weight:600;color:var(--t0);}
+
+/* ETA stops */
+.i-eta{margin:0 14px 14px;background:linear-gradient(135deg,var(--s2),var(--s1));border:1px solid var(--b1);border-radius:var(--r8);overflow:hidden;box-shadow:0 2px 0 rgba(0,0,0,.4);}
+.i-eta-head{
+  padding:7px 10px;background:linear-gradient(90deg,rgba(56,189,248,.06),transparent);
+  font-family:var(--m);font-size:8.5px;text-transform:uppercase;letter-spacing:1.2px;color:var(--t3);
+  border-bottom:1px solid var(--b1);
+}
+.eta-stop-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:7px 10px;border-bottom:1px solid var(--b0);transition:background .15s;
+}
+.eta-stop-row:hover{background:rgba(56,189,248,.03);}
+.eta-stop-row:last-child{border:none;}
+.eta-stop-name{font-size:10.5px;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:155px;}
+.eta-stop-min{font-family:var(--m);font-size:10.5px;font-weight:600;flex-shrink:0;}
 
 /* GPS accuracy */
-.gps-accuracy {
-  position:absolute; top:16px; right:16px; z-index:600;
-  background:rgba(10,16,32,.8); backdrop-filter:blur(10px);
-  border:1px solid var(--b2); border-radius:8px;
-  padding:5px 10px; font-family:var(--mono); font-size:9px; color:var(--txm);
-  display:none; align-items:center; gap:7px;
+.gps-accuracy{
+  position:absolute;top:14px;right:14px;z-index:600;
+  background:rgba(6,10,21,.9);backdrop-filter:blur(12px);
+  border:1px solid var(--b2);border-radius:var(--r8);
+  padding:5px 11px;font-family:var(--m);font-size:9px;color:var(--t2);
+  display:none;align-items:center;gap:6px;
+  box-shadow:0 3px 0 rgba(0,0,0,.5),0 6px 16px rgba(0,0,0,.5);
 }
-.gps-accuracy.show { display:flex; }
+.gps-accuracy.show{display:flex;}
 
-/* ── SUBSCRIBE MODAL ───────────────────────────────────────────── */
-.modal-overlay {
-  position:fixed; inset:0; background:rgba(0,0,0,.75);
-  z-index:2000; display:none; align-items:center; justify-content:center;
-  backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+/* ═══════════════════════════════════════════════
+   SUBSCRIBE MODAL — 3D drop
+═══════════════════════════════════════════════ */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:2000;
+  display:none;align-items:center;justify-content:center;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  perspective:1200px;
 }
-.modal-overlay.show { display:flex; }
-.modal {
-  background:rgba(12,18,34,.95); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
-  border:1px solid var(--b2); border-radius:var(--r-lg);
-  width:360px; max-width:94vw; overflow:hidden;
-  box-shadow:0 40px 100px rgba(0,0,0,.9), 0 0 0 1px rgba(41,182,246,.08);
-  animation:slideUp .22s ease;
+.modal-overlay.show{display:flex;}
+.modal{
+  background:linear-gradient(160deg,rgba(10,18,34,.98) 0%,rgba(6,10,21,.99) 100%);
+  backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
+  border:1px solid var(--b2);border-radius:var(--r16);
+  width:380px;max-width:94vw;overflow:hidden;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.06) inset,
+    0 6px 0 rgba(0,0,0,.8),
+    0 12px 0 rgba(0,0,0,.5),
+    0 24px 0 rgba(0,0,0,.3),
+    0 48px 80px rgba(0,0,0,.9),
+    0 0 0 1px rgba(56,189,248,.08);
+  animation:modal3d .3s cubic-bezier(.34,1.56,.64,1);
+  transform-origin:top center;
 }
-.modal-head {
-  padding:16px 18px; display:flex; align-items:center; justify-content:space-between;
+@keyframes modal3d{
+  from{opacity:0;transform:perspective(1000px) rotateX(12deg) translateY(-30px) scale(.96);}
+  to{opacity:1;transform:perspective(1000px) rotateX(0deg) translateY(0) scale(1);}
+}
+.modal-head{
+  padding:18px 20px;display:flex;align-items:center;justify-content:space-between;
   border-bottom:1px solid var(--b1);
-  background:linear-gradient(135deg, var(--blue-d), transparent);
+  background:linear-gradient(135deg,rgba(56,189,248,.08),rgba(56,189,248,.02));
 }
-.modal-head h3 { font-size:17px; font-weight:700; color:var(--tx3); }
-.modal-body { padding:18px; }
-.modal-stop-info {
-  background:var(--s3); border:1px solid var(--b1); border-radius:var(--r-sm);
-  padding:10px 13px; margin-bottom:16px; font-size:11px; color:var(--tx); line-height:1.6;
+.modal-head h3{font-size:16px;font-weight:700;color:var(--t0);}
+.modal-body{padding:18px 20px;}
+.m-stop-badge{
+  display:flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,var(--s2),var(--s1));
+  border:1px solid var(--b2);border-radius:var(--r8);
+  padding:11px 14px;margin-bottom:16px;
+  box-shadow:0 2px 0 rgba(0,0,0,.5),0 4px 12px rgba(0,0,0,.4);
 }
-.modal-stop-info b { color:var(--blue-b); }
-.flabel { display:block; font-family:var(--mono); font-size:9px; color:var(--txm); letter-spacing:1.2px; text-transform:uppercase; margin-bottom:6px; }
-.finput {
-  width:100%; background:var(--s3); border:1px solid var(--b1); border-radius:var(--r-sm);
-  padding:10px 13px; color:var(--tx3); font-size:13px; font-family:var(--mono); outline:none;
-  margin-bottom:14px; transition:border-color .2s;
+.m-stop-badge-icon{font-size:20px;}
+.m-stop-badge-text{font-size:12px;color:var(--t1);line-height:1.5;}
+.m-stop-badge-text b{color:var(--sky);display:block;font-size:13px;margin-top:1px;}
+.flabel{display:block;font-family:var(--m);font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px;}
+.finput{
+  width:100%;
+  background:linear-gradient(135deg,var(--s2),var(--s1));
+  border:1px solid var(--b2);border-radius:var(--r8);
+  padding:10px 13px;color:var(--t0);font-size:13px;font-family:var(--f);
+  outline:none;margin-bottom:14px;transition:all .2s;
+  box-shadow:0 2px 0 rgba(0,0,0,.4) inset,0 1px 0 rgba(255,255,255,.03);
 }
-.finput:focus { border-color:var(--blue); }
-.fselect {
-  width:100%; background:var(--s3); border:1px solid var(--b1); border-radius:var(--r-sm);
-  padding:10px 13px; color:var(--tx); font-size:12px; font-family:var(--mono);
-  outline:none; margin-bottom:16px; cursor:pointer;
+.finput:focus{border-color:var(--sky);box-shadow:0 2px 0 rgba(0,0,0,.4) inset,0 0 0 2px rgba(56,189,248,.12);}
+.fselect{
+  width:100%;background:linear-gradient(135deg,var(--s2),var(--s1));
+  border:1px solid var(--b2);border-radius:var(--r8);
+  padding:10px 13px;color:var(--t1);font-size:12px;font-family:var(--f);
+  outline:none;margin-bottom:16px;cursor:pointer;
+  box-shadow:0 2px 0 rgba(0,0,0,.4) inset;
 }
-.channel-btns { display:flex; gap:8px; margin-bottom:16px; }
-.ch-btn {
-  flex:1; padding:9px 8px; border-radius:var(--r-sm);
-  border:1px solid var(--b1); background:var(--s3); color:var(--txm);
-  font-size:12px; font-family:var(--font); cursor:pointer; transition:all .18s;
+.ch-row{display:flex;gap:8px;margin-bottom:16px;}
+.ch-btn{
+  flex:1;padding:9px;border-radius:var(--r8);
+  border:1px solid var(--b2);
+  background:linear-gradient(135deg,var(--s2),var(--s1));
+  color:var(--t2);font-size:12.5px;transition:all .18s;
+  box-shadow:0 2px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.03) inset;
 }
-.ch-btn.active { border-color:rgba(41,182,246,.35); color:var(--blue-b); background:var(--blue-d); }
-.ch-btn:hover:not(.active) { border-color:var(--b2); color:var(--tx2); }
-.subscribe-btn {
-  width:100%; padding:11px; border-radius:var(--r-sm); border:none;
-  background:linear-gradient(135deg, #0277bd, #29b6f6);
-  color:#fff; font-size:13px; font-weight:700; font-family:var(--font);
-  cursor:pointer; transition:opacity .15s; letter-spacing:.2px;
-  box-shadow:0 4px 16px rgba(41,182,246,.3);
+.ch-btn.on{
+  border-color:rgba(56,189,248,.4);color:var(--sky);
+  background:linear-gradient(135deg,rgba(56,189,248,.1),rgba(56,189,248,.04));
+  box-shadow:0 2px 0 rgba(0,0,0,.5),0 0 16px rgba(56,189,248,.1),0 1px 0 rgba(255,255,255,.04) inset;
 }
-.subscribe-btn:hover { opacity:.9; }
-.modal-success { display:none; text-align:center; padding:20px 18px 24px; }
-.modal-success-icon { font-size:40px; display:block; margin-bottom:12px; }
-.modal-success p { color:var(--tx); font-size:13px; line-height:1.8; }
-.modal-success b { color:var(--green); }
-.modal-success-close {
-  margin-top:16px; padding:9px 24px; border-radius:var(--r-sm); border:1px solid var(--b2);
-  background:transparent; color:var(--tx); font-size:12px; cursor:pointer; transition:all .15s;
+.ch-btn:hover:not(.on){border-color:var(--b3);color:var(--t0);transform:translateY(-1px);box-shadow:0 3px 0 rgba(0,0,0,.5);}
+.sub-btn{
+  width:100%;padding:12px;border-radius:var(--r8);border:none;
+  background:linear-gradient(135deg,#0c4a8a,#38bdf8,#0ea5e9);color:#fff;
+  font-size:13px;font-weight:700;letter-spacing:.3px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.15) inset,
+    0 -2px 0 rgba(0,0,0,.3) inset,
+    0 4px 0 #041222,
+    0 8px 0 rgba(0,0,0,.4),
+    0 12px 24px rgba(56,189,248,.3);
+  transition:all .15s;
+  transform:perspective(400px) rotateX(2deg);
 }
-.modal-success-close:hover { background:var(--s3); color:var(--tx3); }
+.sub-btn:hover{
+  opacity:.95;transform:perspective(400px) rotateX(0deg) translateY(-2px);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.15) inset,
+    0 -2px 0 rgba(0,0,0,.3) inset,
+    0 6px 0 #041222,
+    0 10px 0 rgba(0,0,0,.4),
+    0 16px 32px rgba(56,189,248,.4);
+}
+.sub-btn:active{
+  transform:perspective(400px) rotateX(4deg) translateY(2px);
+  box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 2px 0 #041222,0 4px 12px rgba(56,189,248,.2);
+}
+.modal-ok{display:none;text-align:center;padding:28px 20px 32px;}
+.modal-ok-icon{font-size:48px;display:block;margin-bottom:14px;filter:drop-shadow(0 0 16px rgba(52,211,153,.5));}
+.modal-ok p{color:var(--t1);font-size:13px;line-height:1.9;}
+.modal-ok b{color:var(--go);}
+.modal-ok button{
+  margin-top:18px;padding:9px 28px;border-radius:var(--r8);
+  border:1px solid var(--b2);
+  background:linear-gradient(135deg,var(--s2),var(--s1));
+  color:var(--t1);font-size:12px;transition:all .15s;
+  box-shadow:0 2px 0 rgba(0,0,0,.5);
+}
+.modal-ok button:hover{background:var(--s3);color:var(--t0);transform:translateY(-1px);}
 
-/* ── Leaflet overrides ─────────────────────────────────────────── */
-.leaflet-popup-content-wrapper {
-  background:rgba(10,16,32,.92) !important; backdrop-filter:blur(16px) !important;
-  border:1px solid var(--b2) !important; color:var(--tx) !important;
-  border-radius:var(--r-md) !important; box-shadow:0 10px 40px rgba(0,0,0,.7) !important;
-  font-family:var(--font) !important;
+/* ── Leaflet overrides ── */
+.leaflet-popup-content-wrapper{
+  background:rgba(8,14,28,.96) !important;backdrop-filter:blur(18px) !important;
+  border:1px solid var(--b2) !important;color:var(--t1) !important;
+  border-radius:var(--r12) !important;
+  box-shadow:0 4px 0 rgba(0,0,0,.7),0 16px 40px rgba(0,0,0,.8) !important;
+  font-family:var(--f) !important;
 }
-.leaflet-popup-tip { background:var(--s1) !important; }
-.leaflet-popup-close-button { color:var(--txm) !important; }
-.stop-marker-custom { cursor:pointer; }
+.leaflet-popup-tip{background:rgba(8,14,28,.96) !important;}
+.leaflet-popup-close-button{color:var(--t3) !important;}
 </style>
 </head>
 <body>
 
-<!-- ── HEADER ─────────────────────────────────────────────────── -->
+<!-- ════════════════ HEADER ════════════════ -->
 <header>
-  <div class="logo">
-    <div class="logo-icon">🚌</div>
-    <div class="logo-text">
-      <div class="logo-name">CityBus<span>Live</span></div>
-      <div class="logo-city">Coimbatore</div>
+  <div class="h-logo">
+    <div class="h-logo-icon">🚌</div>
+    <div class="h-logo-text">
+      <div class="name">CityBus<em>Live</em></div>
+      <div class="city">Coimbatore</div>
     </div>
   </div>
 
-  <div class="mode-pill sim" id="mode-pill">
-    <div class="mode-dot"></div>
-    <span id="mode-label">SIMULATION</span>
+  <div class="h-mode">
+    <div class="mode-pill sim" id="mode-pill">
+      <div class="mdot"></div>
+      <span id="mode-label">SIMULATION</span>
+    </div>
   </div>
 
-  <div class="hkpis">
-    <div class="kpi">
-      <div class="kpiv" id="kA" style="color:var(--blue-b)">0</div>
-      <div class="kpil">Active</div>
+  <div class="h-kpis">
+    <div class="kpi-cell">
+      <div class="kv" id="kA" style="color:var(--sky)">0</div>
+      <div class="kl">Active</div>
     </div>
-    <div class="kpi-div"></div>
-    <div class="kpi">
-      <div class="kpiv" id="kO" style="color:var(--green)">0</div>
-      <div class="kpil">On Time</div>
+    <div class="kpi-cell">
+      <div class="kv" id="kO" style="color:var(--go)">0</div>
+      <div class="kl">On Time</div>
     </div>
-    <div class="kpi-div"></div>
-    <div class="kpi">
-      <div class="kpiv" id="kD" style="color:var(--red)">0</div>
-      <div class="kpil">Delayed</div>
+    <div class="kpi-cell">
+      <div class="kv" id="kD" style="color:var(--bad)">0</div>
+      <div class="kl">Delayed</div>
     </div>
-    <div class="kpi-div"></div>
-    <div class="kpi">
-      <div class="kpiv" id="kS" style="color:var(--amber)">0</div>
-      <div class="kpil">Avg km/h</div>
+    <div class="kpi-cell">
+      <div class="kv" id="kS" style="color:var(--warn)">0</div>
+      <div class="kl">Avg km/h</div>
     </div>
-    <div class="kpi-div"></div>
-    <div class="kpi">
-      <div class="kpiv" id="kE" style="color:var(--purple)">0</div>
-      <div class="kpil">Arr/min</div>
+    <div class="kpi-cell">
+      <div class="kv" id="kE" style="color:var(--purple)">0</div>
+      <div class="kl">Arr/min</div>
     </div>
-    <div class="kpi-div"></div>
-    <div class="clk" id="clk">06:00:00</div>
+    <div class="h-clock" id="clk">06:00:00</div>
   </div>
 </header>
 
-<!-- ── BODY ───────────────────────────────────────────────────── -->
+<!-- ════════════════ BODY ════════════════ -->
 <div class="main">
 
-  <!-- Sidebar -->
+  <!-- ── Sidebar ── -->
   <div class="sidebar">
-    <div class="sbtabs">
-      <div class="sbt on" id="tab-routes" onclick="switchTab('routes')">Routes</div>
-      <div class="sbt" id="tab-fleet"  onclick="switchTab('fleet')">Fleet</div>
-      <div class="sbt" id="tab-alerts" onclick="switchTab('alerts')">🔔 Alerts</div>
+    <div class="tabs">
+      <button class="tab on"  id="tab-routes" onclick="switchTab('routes')">Routes</button>
+      <button class="tab"     id="tab-fleet"  onclick="switchTab('fleet')">Fleet</button>
+      <button class="tab"     id="tab-alerts" onclick="switchTab('alerts')">🔔 Alerts</button>
     </div>
 
     <!-- Routes -->
-    <div class="sbpane on" id="pane-routes">
-      <div class="rlist" id="rlist"></div>
+    <div class="pane on" id="pane-routes">
+      <div class="route-scroll" id="rlist"></div>
     </div>
 
     <!-- Fleet -->
-    <div class="sbpane" id="pane-fleet">
-      <div class="fsearch">
+    <div class="pane" id="pane-fleet">
+      <div class="fleet-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <input id="fsrch" placeholder="Search bus or destination…" oninput="renderFleet()">
       </div>
-      <div class="flist" id="flist"></div>
+      <div class="fleet-scroll" id="flist"></div>
     </div>
 
     <!-- Alerts -->
-    <div class="sbpane" id="pane-alerts">
+    <div class="pane" id="pane-alerts">
       <div class="alerts-pane">
-        <div class="alerts-header">
-          <b>Stop Alerts</b> — Get SMS/WhatsApp when your bus is <b>5 min away</b>.<br>
-          Tap any stop on the map → <span style="color:var(--amber)">🔔 Alert Me</span>.
-        </div>
-        <div class="sub-list" id="sub-list">
-          <div class="no-subs">
-            <span class="no-subs-icon">🔕</span>
-            No active subscriptions.<br>
-            Click a stop on the map<br>and tap "Alert Me".
+        <div class="alerts-intro">
+          <p>Get notified when your bus is <b>5 minutes away</b> from any stop.</p>
+          <div class="hint">
+            <div class="hint-bell">🔔</div>
+            Tap a stop on the map, then press <b style="color:var(--warn)">&nbsp;Alert Me</b>
           </div>
         </div>
-        <div class="traffic-alerts" id="traffic-alerts-pane">
-          <div class="traffic-label">Live Traffic Alerts</div>
+        <div class="subs-scroll" id="sub-list">
+          <div class="no-subs">
+            <span class="no-subs-icon">🔕</span>
+            <p>No active subscriptions.<br>Click a stop on the map<br>and tap "Alert Me".</p>
+          </div>
+        </div>
+        <div class="traffic-section" id="traffic-alerts-pane">
+          <div class="section-label">Live Traffic Alerts</div>
           <div id="ta-list"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Map -->
+  <!-- ── Map ── -->
   <div class="mapwrap">
     <div id="map"></div>
     <div class="alertswrap" id="awrap"></div>
 
     <!-- Stop arrival board -->
     <div class="stopbox" id="stopbox">
-      <div class="stophead">
-        <div class="stop-head-info">
-          <div class="stopname" id="stopname">—</div>
-          <div class="stop-routetag" id="stop-routetag">—</div>
+      <div class="sb-head">
+        <div class="sb-head-left">
+          <div class="sb-stop-name" id="stopname">—</div>
+          <div class="sb-stop-meta" id="stop-routetag">—</div>
         </div>
-        <div class="stophead-actions">
-          <button class="alert-btn" onclick="openSubscribeModal()">🔔 Alert Me</button>
-          <button class="iclose" onclick="closeStopBox()">✕</button>
+        <div class="sb-actions">
+          <button class="bell-btn" onclick="openSubscribeModal()">🔔 Alert Me</button>
+          <button class="x-btn"    onclick="closeStopBox()">✕</button>
         </div>
       </div>
-      <div class="stop-arrivals-label">Next Arrivals</div>
-      <div class="arrivals-list" id="arrivals-list"></div>
+      <div class="sb-label">Next Arrivals</div>
+      <div class="arr-list" id="arrivals-list"></div>
     </div>
 
     <!-- Bus info panel -->
     <div class="infobox" id="ibox">
-      <div class="ihead">
-        <div class="ihead-left">
+      <div class="ih">
+        <div class="ih-left">
           <div class="ibusid" id="ibid">—</div>
           <span class="gps-badge" id="gps-source-badge" style="display:none">GPS</span>
         </div>
-        <button class="iclose" onclick="closeInfo()">✕</button>
+        <button class="x-btn" onclick="closeInfo()">✕</button>
       </div>
-      <div class="ijourney">
-        <div class="ijlabel">Journey Progress</div>
-        <div class="ijtrack">
+      <div class="i-progress">
+        <div class="i-prog-label">Journey Progress</div>
+        <div class="i-prog-track">
           <div class="ijfill" id="ijf"></div>
           <div class="ijthumb" id="ijt"></div>
         </div>
-        <div class="ijends"><span id="ijor">—</span><span id="ijde">—</span></div>
+        <div class="i-prog-ends"><span id="ijor">—</span><span id="ijde">—</span></div>
       </div>
-      <div class="ibody" id="ibody"></div>
-      <div class="eta-stops" id="eta-stops-panel">
-        <div class="eta-stops-label">ETA to Upcoming Stops</div>
+      <div class="i-grid" id="ibody"></div>
+      <div class="i-eta" id="eta-stops-panel">
+        <div class="i-eta-head">ETA to Upcoming Stops</div>
         <div id="eta-stops-list"></div>
       </div>
     </div>
 
-    <!-- GPS indicator -->
     <div class="gps-accuracy" id="gps-accuracy">
       <span id="gps-acc-text">GPS ±10m</span>
     </div>
 
-    <!-- Speed control -->
     <div class="speedbar">
-      <span>SPEED</span>
+      <span>SIM SPEED</span>
       <input type="range" id="srange" min="1" max="12" value="4" oninput="setSpd(this.value)">
-      <span class="spdv" id="spdlbl">4×</span>
+      <span class="spd-val" id="spdlbl">4×</span>
     </div>
   </div>
 </div>
 
-<!-- ── SUBSCRIBE MODAL ─────────────────────────────────────────── -->
+<!-- ════════════════ MODAL ════════════════ -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-head">
-      <h3>🔔 Bus Stop Alerts</h3>
-      <button class="iclose" onclick="closeModal()">✕</button>
+      <h3>Bus Stop Alerts</h3>
+      <button class="x-btn" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body" id="modal-form">
-      <div class="modal-stop-info">
-        Get notified when your bus arrives at<br>
-        <b id="modal-stop-name">—</b>
+      <div class="m-stop-badge">
+        <div class="m-stop-badge-icon">📍</div>
+        <div class="m-stop-badge-text">
+          Notify me when my bus arrives at
+          <b id="modal-stop-name">—</b>
+        </div>
       </div>
-      <label class="flabel">Phone Number</label>
+      <label class="flabel">Your Phone Number</label>
       <input type="tel" class="finput" id="modal-phone" placeholder="+91 98765 43210">
-      <label class="flabel">Notify Via</label>
-      <div class="channel-btns">
-        <button class="ch-btn active" data-ch="sms" onclick="selectChannel(this)">📱 SMS</button>
+      <label class="flabel">Send Alerts Via</label>
+      <div class="ch-row">
+        <button class="ch-btn on" data-ch="sms" onclick="selectChannel(this)">📱 SMS</button>
         <button class="ch-btn" data-ch="whatsapp" onclick="selectChannel(this)">💬 WhatsApp</button>
       </div>
-      <label class="flabel">Route Filter (optional)</label>
+      <label class="flabel">Route (optional)</label>
       <select class="fselect" id="modal-route">
         <option value="">Any bus at this stop</option>
       </select>
-      <button class="subscribe-btn" onclick="submitSubscription()">Subscribe for Alerts</button>
+      <button class="sub-btn" onclick="submitSubscription()">Subscribe for Alerts</button>
     </div>
-    <div class="modal-success" id="modal-success">
-      <span class="modal-success-icon">✅</span>
+    <div class="modal-ok" id="modal-success">
+      <span class="modal-ok-icon">✅</span>
       <p>You're subscribed!<br>We'll alert <b id="success-phone">—</b><br>when your bus is <b>5 minutes away</b>.</p>
-      <button class="modal-success-close" onclick="closeModal()">Done</button>
+      <button onclick="closeModal()">Done</button>
     </div>
   </div>
 </div>
 
+<!-- ════════════════ SCRIPT ════════════════ -->
 <script>
-// ─────────────────────────────────────────────────────────────────
-// DATA
-// ─────────────────────────────────────────────────────────────────
-const ROUTES = [
-  { id:'R1', num:'1A', color:'#29b6f6', stops:[
-    {sid:'R1_0', name:'Gandhipuram Bus Stand',   lat:11.0168, lng:76.9758},
-    {sid:'R1_1', name:'Town Hall',               lat:11.0140, lng:76.9720},
-    {sid:'R1_2', name:'Katcheri Road',           lat:11.0110, lng:76.9685},
-    {sid:'R1_3', name:'R.S. Puram',              lat:11.0075, lng:76.9640},
-    {sid:'R1_4', name:'Peelamedu Road',          lat:11.0040, lng:76.9600},
-    {sid:'R1_5', name:'Kavundampalayam',         lat:11.0010, lng:76.9560},
-    {sid:'R1_6', name:'Ukkadam Bus Terminus',    lat:10.9980, lng:76.9530},
+const ROUTES=[
+  {id:'R1',num:'1A',color:'#38bdf8',stops:[
+    {sid:'R1_0',name:'Gandhipuram Bus Stand',lat:11.0168,lng:76.9758},
+    {sid:'R1_1',name:'Town Hall',lat:11.0140,lng:76.9720},
+    {sid:'R1_2',name:'Katcheri Road',lat:11.0110,lng:76.9685},
+    {sid:'R1_3',name:'R.S. Puram',lat:11.0075,lng:76.9640},
+    {sid:'R1_4',name:'Peelamedu Road',lat:11.0040,lng:76.9600},
+    {sid:'R1_5',name:'Kavundampalayam',lat:11.0010,lng:76.9560},
+    {sid:'R1_6',name:'Ukkadam Bus Terminus',lat:10.9980,lng:76.9530},
   ]},
-  { id:'R2', num:'9C', color:'#f06292', stops:[
-    {sid:'R2_0', name:'Singanallur',             lat:11.0020, lng:77.0220},
-    {sid:'R2_1', name:'Airport Road',            lat:11.0050, lng:77.0100},
-    {sid:'R2_2', name:'Avinashi Road Junction',  lat:11.0080, lng:76.9980},
-    {sid:'R2_3', name:'PSG College',             lat:11.0120, lng:76.9890},
-    {sid:'R2_4', name:'Hopes College',           lat:11.0150, lng:76.9820},
-    {sid:'R2_5', name:'Peelamedu',               lat:11.0200, lng:76.9760},
+  {id:'R2',num:'9C',color:'#f472b6',stops:[
+    {sid:'R2_0',name:'Singanallur',lat:11.0020,lng:77.0220},
+    {sid:'R2_1',name:'Airport Road',lat:11.0050,lng:77.0100},
+    {sid:'R2_2',name:'Avinashi Road Junction',lat:11.0080,lng:76.9980},
+    {sid:'R2_3',name:'PSG College',lat:11.0120,lng:76.9890},
+    {sid:'R2_4',name:'Hopes College',lat:11.0150,lng:76.9820},
+    {sid:'R2_5',name:'Peelamedu',lat:11.0200,lng:76.9760},
   ]},
-  { id:'R3', num:'15', color:'#66bb6a', stops:[
-    {sid:'R3_0', name:'Podanur Junction',        lat:10.9870, lng:76.9760},
-    {sid:'R3_1', name:'Nehru Nagar',             lat:10.9920, lng:76.9730},
-    {sid:'R3_2', name:'Collectorate',            lat:10.9970, lng:76.9700},
-    {sid:'R3_3', name:'Town Bus Stand',          lat:11.0010, lng:76.9670},
-    {sid:'R3_4', name:'Ganapathy',               lat:11.0140, lng:76.9620},
-    {sid:'R3_5', name:'Bharathiyar University',  lat:11.0270, lng:76.9580},
+  {id:'R3',num:'15',color:'#4ade80',stops:[
+    {sid:'R3_0',name:'Podanur Junction',lat:10.9870,lng:76.9760},
+    {sid:'R3_1',name:'Nehru Nagar',lat:10.9920,lng:76.9730},
+    {sid:'R3_2',name:'Collectorate',lat:10.9970,lng:76.9700},
+    {sid:'R3_3',name:'Town Bus Stand',lat:11.0010,lng:76.9670},
+    {sid:'R3_4',name:'Ganapathy',lat:11.0140,lng:76.9620},
+    {sid:'R3_5',name:'Bharathiyar University',lat:11.0270,lng:76.9580},
   ]},
-  { id:'R4', num:'21E', color:'#ff8a65', stops:[
-    {sid:'R4_0', name:'Saibaba Colony',          lat:11.0230, lng:76.9700},
-    {sid:'R4_1', name:'Race Course',             lat:11.0200, lng:76.9660},
-    {sid:'R4_2', name:'Raj Bhavan',              lat:11.0170, lng:76.9630},
-    {sid:'R4_3', name:'Puliakulam',              lat:11.0130, lng:76.9580},
-    {sid:'R4_4', name:'Vilankurichi',            lat:11.0080, lng:76.9500},
-    {sid:'R4_5', name:'Vadavalli',               lat:11.0020, lng:76.9420},
+  {id:'R4',num:'21E',color:'#fb923c',stops:[
+    {sid:'R4_0',name:'Saibaba Colony',lat:11.0230,lng:76.9700},
+    {sid:'R4_1',name:'Race Course',lat:11.0200,lng:76.9660},
+    {sid:'R4_2',name:'Raj Bhavan',lat:11.0170,lng:76.9630},
+    {sid:'R4_3',name:'Puliakulam',lat:11.0130,lng:76.9580},
+    {sid:'R4_4',name:'Vilankurichi',lat:11.0080,lng:76.9500},
+    {sid:'R4_5',name:'Vadavalli',lat:11.0020,lng:76.9420},
   ]},
-  { id:'R5', num:'7B', color:'#ba68c8', stops:[
-    {sid:'R5_0', name:'Coimbatore Junction',     lat:11.0024, lng:76.9659},
-    {sid:'R5_1', name:'Tatabad',                 lat:10.9990, lng:76.9620},
-    {sid:'R5_2', name:'Gandhipuram West',        lat:10.9960, lng:76.9580},
-    {sid:'R5_3', name:'DB Road',                 lat:10.9920, lng:76.9540},
-    {sid:'R5_4', name:'Kovaipudur',              lat:10.9870, lng:76.9490},
-    {sid:'R5_5', name:'Kuniyamuthur',            lat:10.9820, lng:76.9440},
+  {id:'R5',num:'7B',color:'#a78bfa',stops:[
+    {sid:'R5_0',name:'Coimbatore Junction',lat:11.0024,lng:76.9659},
+    {sid:'R5_1',name:'Tatabad',lat:10.9990,lng:76.9620},
+    {sid:'R5_2',name:'Gandhipuram West',lat:10.9960,lng:76.9580},
+    {sid:'R5_3',name:'DB Road',lat:10.9920,lng:76.9540},
+    {sid:'R5_4',name:'Kovaipudur',lat:10.9870,lng:76.9490},
+    {sid:'R5_5',name:'Kuniyamuthur',lat:10.9820,lng:76.9440},
   ]},
-  { id:'R6', num:'33', color:'#ffca28', stops:[
-    {sid:'R6_0', name:'Kalapatti',               lat:11.0480, lng:77.0200},
-    {sid:'R6_1', name:'TNAU Gate',               lat:11.0420, lng:77.0080},
-    {sid:'R6_2', name:'Codissia Trade Fair',     lat:11.0360, lng:76.9960},
-    {sid:'R6_3', name:'Neel Kamal',              lat:11.0290, lng:76.9850},
-    {sid:'R6_4', name:'Lakshmi Mills',           lat:11.0200, lng:76.9750},
-    {sid:'R6_5', name:'R.S. Puram West',         lat:11.0100, lng:76.9660},
+  {id:'R6',num:'33',color:'#fbbf24',stops:[
+    {sid:'R6_0',name:'Kalapatti',lat:11.0480,lng:77.0200},
+    {sid:'R6_1',name:'TNAU Gate',lat:11.0420,lng:77.0080},
+    {sid:'R6_2',name:'Codissia Trade Fair',lat:11.0360,lng:76.9960},
+    {sid:'R6_3',name:'Neel Kamal',lat:11.0290,lng:76.9850},
+    {sid:'R6_4',name:'Lakshmi Mills',lat:11.0200,lng:76.9750},
+    {sid:'R6_5',name:'R.S. Puram West',lat:11.0100,lng:76.9660},
   ]},
-  { id:'R7', num:'44A', color:'#4db6ac', stops:[
-    {sid:'R7_0', name:'Sulur Bus Stop',          lat:11.0290, lng:77.1220},
-    {sid:'R7_1', name:'Sulur Town',              lat:11.0260, lng:77.0980},
-    {sid:'R7_2', name:'Chinniyampalayam',        lat:11.0240, lng:77.0750},
-    {sid:'R7_3', name:'Kannampalayam',           lat:11.0210, lng:77.0500},
-    {sid:'R7_4', name:'Nava India',              lat:11.0190, lng:77.0280},
-    {sid:'R7_5', name:'Singanallur Junction',    lat:11.0160, lng:77.0100},
-    {sid:'R7_6', name:'Gandhipuram (44A)',        lat:11.0168, lng:76.9758},
+  {id:'R7',num:'44A',color:'#34d399',stops:[
+    {sid:'R7_0',name:'Sulur Bus Stop',lat:11.0290,lng:77.1220},
+    {sid:'R7_1',name:'Sulur Town',lat:11.0260,lng:77.0980},
+    {sid:'R7_2',name:'Chinniyampalayam',lat:11.0240,lng:77.0750},
+    {sid:'R7_3',name:'Kannampalayam',lat:11.0210,lng:77.0500},
+    {sid:'R7_4',name:'Nava India',lat:11.0190,lng:77.0280},
+    {sid:'R7_5',name:'Singanallur Junction',lat:11.0160,lng:77.0100},
+    {sid:'R7_6',name:'Gandhipuram (44A)',lat:11.0168,lng:76.9758},
   ]},
-  { id:'R8', num:'18', color:'#ef5350', stops:[
-    {sid:'R8_0', name:'Mettupalayam Road',       lat:11.0600, lng:76.9850},
-    {sid:'R8_1', name:'Selvapuram',              lat:11.0520, lng:76.9800},
-    {sid:'R8_2', name:'Seeranaickenpalayam',     lat:11.0440, lng:76.9750},
-    {sid:'R8_3', name:'Velandipalayam',          lat:11.0360, lng:76.9720},
-    {sid:'R8_4', name:'Cheran Ma Nagar',         lat:11.0280, lng:76.9690},
-    {sid:'R8_5', name:'Gandhipuram (18)',         lat:11.0168, lng:76.9758},
+  {id:'R8',num:'18',color:'#f87171',stops:[
+    {sid:'R8_0',name:'Mettupalayam Road',lat:11.0600,lng:76.9850},
+    {sid:'R8_1',name:'Selvapuram',lat:11.0520,lng:76.9800},
+    {sid:'R8_2',name:'Seeranaickenpalayam',lat:11.0440,lng:76.9750},
+    {sid:'R8_3',name:'Velandipalayam',lat:11.0360,lng:76.9720},
+    {sid:'R8_4',name:'Cheran Ma Nagar',lat:11.0280,lng:76.9690},
+    {sid:'R8_5',name:'Gandhipuram (18)',lat:11.0168,lng:76.9758},
   ]},
-  { id:'R9', num:'52', color:'#ce93d8', stops:[
-    {sid:'R9_0', name:'Koundampalayam',          lat:11.0320, lng:76.9480},
-    {sid:'R9_1', name:'Saravanampatti',          lat:11.0410, lng:76.9620},
-    {sid:'R9_2', name:'ITI Layout',              lat:11.0360, lng:76.9700},
-    {sid:'R9_3', name:'Thudiyalur',              lat:11.0280, lng:76.9640},
-    {sid:'R9_4', name:'VGP Layout',              lat:11.0210, lng:76.9610},
-    {sid:'R9_5', name:'Peelamedu Airport',       lat:11.0280, lng:77.0440},
+  {id:'R9',num:'52',color:'#e879f9',stops:[
+    {sid:'R9_0',name:'Koundampalayam',lat:11.0320,lng:76.9480},
+    {sid:'R9_1',name:'Saravanampatti',lat:11.0410,lng:76.9620},
+    {sid:'R9_2',name:'ITI Layout',lat:11.0360,lng:76.9700},
+    {sid:'R9_3',name:'Thudiyalur',lat:11.0280,lng:76.9640},
+    {sid:'R9_4',name:'VGP Layout',lat:11.0210,lng:76.9610},
+    {sid:'R9_5',name:'Peelamedu Airport',lat:11.0280,lng:77.0440},
   ]},
-  { id:'R10', num:'6', color:'#4dd0e1', stops:[
-    {sid:'R10_0', name:'Ukkadam',                lat:10.9980, lng:76.9530},
-    {sid:'R10_1', name:'Eachanari',              lat:10.9910, lng:76.9640},
-    {sid:'R10_2', name:'Madukkarai',             lat:10.9830, lng:76.9740},
-    {sid:'R10_3', name:'Thondamuthur',           lat:10.9760, lng:76.9640},
-    {sid:'R10_4', name:'Siruvani Road',          lat:10.9700, lng:76.9540},
-    {sid:'R10_5', name:'Perur',                  lat:10.9850, lng:76.9420},
+  {id:'R10',num:'6',color:'#67e8f9',stops:[
+    {sid:'R10_0',name:'Ukkadam',lat:10.9980,lng:76.9530},
+    {sid:'R10_1',name:'Eachanari',lat:10.9910,lng:76.9640},
+    {sid:'R10_2',name:'Madukkarai',lat:10.9830,lng:76.9740},
+    {sid:'R10_3',name:'Thondamuthur',lat:10.9760,lng:76.9640},
+    {sid:'R10_4',name:'Siruvani Road',lat:10.9700,lng:76.9540},
+    {sid:'R10_5',name:'Perur',lat:10.9850,lng:76.9420},
   ]},
 ];
 
-const FLEET = [
-  {id:'Gandhipuram Bus Stand', route:'R1', cap:52, si:0, pg:0.0},
-  {id:'Town Hall Stop',        route:'R1', cap:52, si:1, pg:0.5},
-  {id:'R.S. Puram Stop',       route:'R1', cap:52, si:3, pg:0.2},
-  {id:'Ukkadam Terminus',      route:'R1', cap:52, si:5, pg:0.7},
-  {id:'Singanallur Depot',     route:'R2', cap:48, si:0, pg:0.3},
-  {id:'Airport Road Stop',     route:'R2', cap:48, si:1, pg:0.8},
-  {id:'PSG College Stop',      route:'R2', cap:48, si:3, pg:0.1},
-  {id:'Podanur Junction Stop', route:'R3', cap:56, si:0, pg:0.6},
-  {id:'Collectorate Stop',     route:'R3', cap:56, si:2, pg:0.4},
-  {id:'Ganapathy Stop',        route:'R3', cap:56, si:4, pg:0.1},
-  {id:'Saibaba Colony Stop',   route:'R4', cap:50, si:0, pg:0.8},
-  {id:'Race Course Stop',      route:'R4', cap:50, si:1, pg:0.5},
-  {id:'Puliakulam Stop',       route:'R4', cap:50, si:3, pg:0.2},
-  {id:'Coimbatore Junction',   route:'R5', cap:44, si:0, pg:0.0},
-  {id:'Tatabad Bus Stop',      route:'R5', cap:44, si:1, pg:0.6},
-  {id:'Kuniyamuthur Stop',     route:'R5', cap:44, si:4, pg:0.3},
-  {id:'Kalapatti Bus Shelter', route:'R6', cap:46, si:0, pg:0.3},
-  {id:'TNAU Gate Stop',        route:'R6', cap:46, si:1, pg:0.9},
-  {id:'Lakshmi Mills Stop',    route:'R6', cap:46, si:4, pg:0.1},
-  {id:'Sulur Depot',           route:'R7', cap:54, si:0, pg:0.2},
-  {id:'Chinniyampalayam Stop', route:'R7', cap:54, si:2, pg:0.7},
-  {id:'Nava India Stop',       route:'R7', cap:54, si:4, pg:0.4},
-  {id:'Mettupalayam Rd Stop',  route:'R8', cap:50, si:0, pg:0.5},
-  {id:'Selvapuram Bus Stop',   route:'R8', cap:50, si:1, pg:0.8},
-  {id:'Velandipalayam Stop',   route:'R8', cap:50, si:3, pg:0.2},
-  {id:'Koundampalayam Stop',   route:'R9', cap:46, si:0, pg:0.4},
-  {id:'Saravanampatti Stop',   route:'R9', cap:46, si:1, pg:0.6},
-  {id:'Peelamedu Airport Stop',route:'R9', cap:46, si:4, pg:0.1},
-  {id:'Ukkadam South Stop',    route:'R10',cap:52, si:0, pg:0.3},
-  {id:'Madukkarai Bus Stop',   route:'R10',cap:52, si:2, pg:0.7},
-  {id:'Perur Temple Stop',     route:'R10',cap:52, si:5, pg:0.1},
+const FLEET=[
+  {id:'Gandhipuram Bus Stand',route:'R1',cap:52,si:0,pg:.0},
+  {id:'Town Hall Stop',route:'R1',cap:52,si:1,pg:.5},
+  {id:'R.S. Puram Stop',route:'R1',cap:52,si:3,pg:.2},
+  {id:'Ukkadam Terminus',route:'R1',cap:52,si:5,pg:.7},
+  {id:'Singanallur Depot',route:'R2',cap:48,si:0,pg:.3},
+  {id:'Airport Road Stop',route:'R2',cap:48,si:1,pg:.8},
+  {id:'PSG College Stop',route:'R2',cap:48,si:3,pg:.1},
+  {id:'Podanur Junction Stop',route:'R3',cap:56,si:0,pg:.6},
+  {id:'Collectorate Stop',route:'R3',cap:56,si:2,pg:.4},
+  {id:'Ganapathy Stop',route:'R3',cap:56,si:4,pg:.1},
+  {id:'Saibaba Colony Stop',route:'R4',cap:50,si:0,pg:.8},
+  {id:'Race Course Stop',route:'R4',cap:50,si:1,pg:.5},
+  {id:'Puliakulam Stop',route:'R4',cap:50,si:3,pg:.2},
+  {id:'Coimbatore Junction',route:'R5',cap:44,si:0,pg:.0},
+  {id:'Tatabad Bus Stop',route:'R5',cap:44,si:1,pg:.6},
+  {id:'Kuniyamuthur Stop',route:'R5',cap:44,si:4,pg:.3},
+  {id:'Kalapatti Bus Shelter',route:'R6',cap:46,si:0,pg:.3},
+  {id:'TNAU Gate Stop',route:'R6',cap:46,si:1,pg:.9},
+  {id:'Lakshmi Mills Stop',route:'R6',cap:46,si:4,pg:.1},
+  {id:'Sulur Depot',route:'R7',cap:54,si:0,pg:.2},
+  {id:'Chinniyampalayam Stop',route:'R7',cap:54,si:2,pg:.7},
+  {id:'Nava India Stop',route:'R7',cap:54,si:4,pg:.4},
+  {id:'Mettupalayam Rd Stop',route:'R8',cap:50,si:0,pg:.5},
+  {id:'Selvapuram Bus Stop',route:'R8',cap:50,si:1,pg:.8},
+  {id:'Velandipalayam Stop',route:'R8',cap:50,si:3,pg:.2},
+  {id:'Koundampalayam Stop',route:'R9',cap:46,si:0,pg:.4},
+  {id:'Saravanampatti Stop',route:'R9',cap:46,si:1,pg:.6},
+  {id:'Peelamedu Airport Stop',route:'R9',cap:46,si:4,pg:.1},
+  {id:'Ukkadam South Stop',route:'R10',cap:52,si:0,pg:.3},
+  {id:'Madukkarai Bus Stop',route:'R10',cap:52,si:2,pg:.7},
+  {id:'Perur Temple Stop',route:'R10',cap:52,si:5,pg:.1},
 ];
 
-const ALERTS_POOL = [
+const ALERTS_POOL=[
   'Heavy traffic near Gandhipuram signal','Road work at RS Puram — expect 8 min delay',
   'Signal failure at Peelamedu Junction','Route 21E diversion near Raj Bhavan',
   'Increased ridership near PSG College','Bus on R7 ahead of schedule by 3 min',
@@ -780,279 +1103,234 @@ const ALERTS_POOL = [
   'Route 15 — extra service added today','TNAU Gate stop reopened after maintenance',
 ];
 
-// ─────────────────────────────────────────────────────────────────
-// STATE
-// ─────────────────────────────────────────────────────────────────
-let BS = {}, MK = {}, MAP, STOP_MK = {};
-let activeR = new Set(ROUTES.map(r=>r.id));
-let selBus = null, selStop = null, simSpd = 4, tick = 0;
-let simTime = new Date(); simTime.setHours(6,0,0,0);
-let wsMode = 'simulation', wsClient = null;
-let subscriptions = JSON.parse(localStorage.getItem('cbl_subs') || '[]');
-let liveTrafficAlerts = [];
-let arrivalCountThisMin = 0, arrivalCountDisplay = 0;
-let modalChannel = 'sms';
+// ── State ──
+let BS={},MK={},MAP,STOP_MK={};
+let activeR=new Set(ROUTES.map(r=>r.id));
+let selBus=null,selStop=null,simSpd=4,tick=0;
+let simTime=new Date(); simTime.setHours(6,0,0,0);
+let wsMode='simulation',wsClient=null;
+let subscriptions=JSON.parse(localStorage.getItem('cbl_subs')||'[]');
+let liveAlerts=[],arrivalCountDisplay=0,modalChannel='sms';
 
-function R(id){ return ROUTES.find(r=>r.id===id); }
-function lerp(a,b,t){ return a+(b-a)*t; }
+const Rfn=id=>ROUTES.find(r=>r.id===id);
+const lerp=(a,b,t)=>a+(b-a)*t;
 
-// ─────────────────────────────────────────────────────────────────
-// ETA (Haversine)
-// ─────────────────────────────────────────────────────────────────
-function haversine(lat1, lng1, lat2, lng2) {
-  const R = 6371, d2r = Math.PI/180;
-  const dLat = (lat2-lat1)*d2r, dLng = (lng2-lng1)*d2r;
-  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*d2r)*Math.cos(lat2*d2r)*Math.sin(dLng/2)**2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+// ── ETA (Haversine) ──
+function hav(a,b,c,d){
+  const R=6371,f=Math.PI/180,da=(c-a)*f,db=(d-b)*f;
+  const x=Math.sin(da/2)**2+Math.cos(a*f)*Math.cos(c*f)*Math.sin(db/2)**2;
+  return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
 }
-
-function calcETAsForStop(sid) {
-  const arrivals = [];
-  Object.values(BS).forEach(s => {
-    if (!activeR.has(s.route)) return;
-    const rt = R(s.route);
-    for (let i = s.nsi; i < rt.stops.length; i++) {
-      if (rt.stops[i].sid === sid) {
-        let km = haversine(s.lat, s.lng, rt.stops[s.nsi].lat, rt.stops[s.nsi].lng);
-        for (let j = s.nsi; j < i; j++)
-          km += haversine(rt.stops[j].lat, rt.stops[j].lng, rt.stops[j+1].lat, rt.stops[j+1].lng);
-        const etaMin = Math.round((km / Math.max(s.spd||20,5)) * 60);
-        arrivals.push({ busId:s.id, routeId:s.route, routeNum:s.rnum, color:s.color, etaMin, status:s.status, occ:s.occ, cap:s.cap });
+function etasForStop(sid){
+  const arr=[];
+  Object.values(BS).forEach(s=>{
+    if(!activeR.has(s.route))return;
+    const rt=Rfn(s.route);
+    for(let i=s.nsi;i<rt.stops.length;i++){
+      if(rt.stops[i].sid===sid){
+        let km=hav(s.lat,s.lng,rt.stops[s.nsi].lat,rt.stops[s.nsi].lng);
+        for(let j=s.nsi;j<i;j++)km+=hav(rt.stops[j].lat,rt.stops[j].lng,rt.stops[j+1].lat,rt.stops[j+1].lng);
+        arr.push({busId:s.id,routeNum:s.rnum,color:s.color,etaMin:Math.round((km/Math.max(s.spd||20,5))*60),occ:s.occ,cap:s.cap,status:s.status});
         break;
       }
     }
   });
-  return arrivals.sort((a,b)=>a.etaMin-b.etaMin).slice(0,6);
+  return arr.sort((a,b)=>a.etaMin-b.etaMin).slice(0,6);
 }
-
-function calcETAsForBus(busId) {
-  const s = BS[busId]; if (!s) return [];
-  const rt = R(s.route); const result = []; let km = 0;
-  for (let i = s.nsi; i < rt.stops.length; i++) {
-    km = i===s.nsi ? haversine(s.lat,s.lng,rt.stops[i].lat,rt.stops[i].lng)
-                   : km + haversine(rt.stops[i-1].lat,rt.stops[i-1].lng,rt.stops[i].lat,rt.stops[i].lng);
-    result.push({ stop:rt.stops[i], etaMin:Math.round((km/Math.max(s.spd||20,5))*60) });
-    if (result.length >= 4) break;
+function etasForBus(id){
+  const s=BS[id];if(!s)return[];
+  const rt=Rfn(s.route);const res=[];let km=0;
+  for(let i=s.nsi;i<rt.stops.length;i++){
+    km=i===s.nsi?hav(s.lat,s.lng,rt.stops[i].lat,rt.stops[i].lng):km+hav(rt.stops[i-1].lat,rt.stops[i-1].lng,rt.stops[i].lat,rt.stops[i].lng);
+    res.push({stop:rt.stops[i],etaMin:Math.round((km/Math.max(s.spd||20,5))*60)});
+    if(res.length>=4)break;
   }
-  return result;
+  return res;
 }
-
-function countArrivals() {
-  let c = 0;
-  ROUTES.forEach(rt => Object.values(BS).forEach(s => {
-    if (s.route !== rt.id) return;
-    const ns = rt.stops[s.nsi];
-    if ((haversine(s.lat,s.lng,ns.lat,ns.lng)/Math.max(s.spd||20,5))*60 <= 1) c++;
+function countArr(){
+  let c=0;
+  ROUTES.forEach(rt=>Object.values(BS).forEach(s=>{
+    if(s.route!==rt.id)return;
+    const ns=rt.stops[s.nsi];
+    if((hav(s.lat,s.lng,ns.lat,ns.lng)/Math.max(s.spd||20,5))*60<=1)c++;
   }));
   return c;
 }
 
-// ─────────────────────────────────────────────────────────────────
-// WEBSOCKET
-// ─────────────────────────────────────────────────────────────────
-function connectWebSocket() {
-  if (location.protocol === 'file:') return;
-  try {
-    wsClient = new WebSocket(`ws://${location.hostname}:3000`);
-    wsClient.onopen = () => { wsMode='live'; updateModeIndicator(); document.getElementById('gps-accuracy').classList.add('show'); };
-    wsClient.onmessage = (evt) => {
-      try {
-        const msg = JSON.parse(evt.data);
-        if (msg.type==='FULL_STATE') Object.entries(msg.buses||{}).forEach(([id,d])=>{ if(BS[id]) Object.assign(BS[id],d); });
-        else if (msg.type==='BUS_UPDATE') { if(BS[msg.busId]){ Object.assign(BS[msg.busId],msg.position); BS[msg.busId].gpsSource=true; } }
-        else if (msg.type==='ALERT') pushAlert(msg.text);
-      } catch(e){}
+// ── WebSocket ──
+function connectWS(){
+  if(location.protocol==='file:')return;
+  try{
+    wsClient=new WebSocket(`ws://${location.hostname}:3000`);
+    wsClient.onopen=()=>{wsMode='live';updateMode();document.getElementById('gps-accuracy').classList.add('show');};
+    wsClient.onmessage=evt=>{
+      try{
+        const m=JSON.parse(evt.data);
+        if(m.type==='FULL_STATE')Object.entries(m.buses||{}).forEach(([id,d])=>{if(BS[id])Object.assign(BS[id],d);});
+        else if(m.type==='BUS_UPDATE'&&BS[m.busId]){Object.assign(BS[m.busId],m.position);BS[m.busId].gpsSource=true;}
+        else if(m.type==='ALERT')pushAlert(m.text);
+      }catch(e){}
     };
-    wsClient.onclose = () => { wsMode='simulation'; updateModeIndicator(); document.getElementById('gps-accuracy').classList.remove('show'); setTimeout(connectWebSocket,6000); };
-    wsClient.onerror = () => { wsMode='simulation'; updateModeIndicator(); };
-  } catch(e){}
+    wsClient.onclose=()=>{wsMode='simulation';updateMode();document.getElementById('gps-accuracy').classList.remove('show');setTimeout(connectWS,6000);};
+    wsClient.onerror=()=>{wsMode='simulation';updateMode();};
+  }catch(e){}
+}
+function updateMode(){
+  const p=document.getElementById('mode-pill');
+  p.className='mode-pill '+wsMode;
+  document.getElementById('mode-label').textContent=wsMode==='live'?'LIVE GPS':'SIMULATION';
+  const sr=document.getElementById('srange');
+  sr.closest('.speedbar').style.opacity=wsMode==='live'?'.4':'1';
+  sr.disabled=wsMode==='live';
 }
 
-function updateModeIndicator() {
-  const pill = document.getElementById('mode-pill');
-  pill.className = 'mode-pill ' + wsMode;
-  document.getElementById('mode-label').textContent = wsMode==='live' ? 'LIVE GPS' : 'SIMULATION';
-  const sb = document.getElementById('srange');
-  sb.closest('.speedbar').style.opacity = wsMode==='live' ? '.4' : '1';
-  sb.disabled = wsMode==='live';
-}
-
-// ─────────────────────────────────────────────────────────────────
-// INIT BUS STATE
-// ─────────────────────────────────────────────────────────────────
+// ── Init bus state ──
 FLEET.forEach(b=>{
-  const rt=R(b.route), s0=rt.stops[b.si], s1=rt.stops[(b.si+1)%rt.stops.length];
-  BS[b.id]={
-    ...b,
-    lat:lerp(s0.lat,s1.lat,b.pg), lng:lerp(s0.lng,s1.lng,b.pg),
-    spd:16+Math.random()*26, hdg:0,
-    occ:Math.floor(Math.random()*b.cap),
+  const rt=Rfn(b.route),s0=rt.stops[b.si],s1=rt.stops[(b.si+1)%rt.stops.length];
+  BS[b.id]={...b,lat:lerp(s0.lat,s1.lat,b.pg),lng:lerp(s0.lng,s1.lng,b.pg),
+    spd:16+Math.random()*26,hdg:0,occ:Math.floor(Math.random()*b.cap),
     status:Math.random()>.25?'on-time':'delayed',
     driver:'Driver '+(Math.floor(Math.random()*90)+10),
-    color:rt.color, rnum:rt.num,
-    rname:rt.num+' '+rt.stops[0].name.split(' ')[0]+'→'+rt.stops[rt.stops.length-1].name.split(' ')[0],
-    dest:rt.stops[rt.stops.length-1].name, origin:rt.stops[0].name,
+    color:rt.color,rnum:rt.num,
+    dest:rt.stops[rt.stops.length-1].name,origin:rt.stops[0].name,
     nsi:(b.si+1)%rt.stops.length,
     jpct:Math.round((b.si/Math.max(1,rt.stops.length-1))*100),
-    totalS:rt.stops.length, gpsSource:false,
-  };
+    gpsSource:false};
 });
 
-// ─────────────────────────────────────────────────────────────────
-// MAP
-// ─────────────────────────────────────────────────────────────────
+// ── Map ──
 function initMap(){
-  MAP = L.map('map',{center:[11.0168,76.9758],zoom:13,zoomControl:false});
+  MAP=L.map('map',{center:[11.0168,76.9758],zoom:13,zoomControl:false});
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(MAP);
   L.control.zoom({position:'bottomright'}).addTo(MAP);
-
   ROUTES.forEach(rt=>{
-    L.polyline(rt.stops.map(s=>[s.lat,s.lng]),{color:rt.color,weight:2.5,opacity:.45,dashArray:'8 5'}).addTo(MAP);
+    L.polyline(rt.stops.map(s=>[s.lat,s.lng]),{color:rt.color,weight:2.5,opacity:.4,dashArray:'8 5'}).addTo(MAP);
     rt.stops.forEach((st,i)=>{
-      const term = i===0||i===rt.stops.length-1;
-      const m = L.circleMarker([st.lat,st.lng],{
-        radius:term?7:4.5, fillColor:rt.color, color:'#060a12',
-        weight:term?2:1.5, fillOpacity:term?1:.75, className:'stop-marker-custom'
-      }).addTo(MAP);
+      const term=i===0||i===rt.stops.length-1;
+      const m=L.circleMarker([st.lat,st.lng],{radius:term?7:4.5,fillColor:rt.color,color:'#03060e',weight:term?2:1.5,fillOpacity:term?1:.75}).addTo(MAP);
       m.on('click',()=>openStopBox(st.sid,st.name,rt));
       STOP_MK[st.sid]=m;
     });
   });
-
   FLEET.forEach(b=>{
     const s=BS[b.id];
     const m=L.marker([s.lat,s.lng],{icon:mkIcon(s),zIndexOffset:500});
-    m.addTo(MAP); m.on('click',()=>selBusFn(b.id)); MK[b.id]=m;
+    m.addTo(MAP);m.on('click',()=>selBusFn(b.id));MK[b.id]=m;
+  });
+}
+function mkIcon(s){
+  const c=s.color,ring=s.status==='delayed'?'#f87171':'#34d399';
+  return L.divIcon({
+    html:`<div style="position:relative;width:34px;height:40px">
+      <div style="position:absolute;inset:-5px;width:44px;height:44px;border-radius:50%;border:1.5px solid ${ring};opacity:.4;animation:spin 4s linear infinite"></div>
+      <div style="position:absolute;inset:0;width:32px;height:32px;border-radius:10px 10px 10px 2px;
+        background:linear-gradient(145deg,${c}ee,${c}aa);
+        border:2px solid #03060e;
+        display:flex;align-items:center;justify-content:center;font-size:15px;
+        box-shadow:0 0 0 1px ${c}55,0 4px 0 rgba(0,0,0,.7),0 8px 0 rgba(0,0,0,.4),0 12px 20px ${c}44;
+        transform:rotate(${s.hdg}deg) perspective(100px) rotateX(8deg)">🚌</div>
+      <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+        background:rgba(3,6,14,.97);border:1px solid ${c}cc;color:${c};
+        font-size:7px;font-family:'JetBrains Mono',monospace;
+        padding:1px 5px;border-radius:3px;white-space:nowrap;font-weight:700;
+        box-shadow:0 2px 0 rgba(0,0,0,.6),0 0 8px ${c}44;
+        text-shadow:0 0 8px ${c}">${s.rnum}</div>
+    </div>`,
+    className:'',iconSize:[34,40],iconAnchor:[16,16]
   });
 }
 
-function mkIcon(s){
-  const c=s.color, ring=s.status==='delayed'?'#ef5350':'#00e676';
-  const html=`<div style="position:relative;width:32px;height:36px">
-    <div style="position:absolute;inset:-4px;top:-4px;width:40px;height:40px;border-radius:50%;border:2px solid ${ring};opacity:.5;"></div>
-    <div style="position:absolute;inset:0;width:30px;height:30px;border-radius:8px 8px 8px 2px;background:${c};border:2px solid #060a12;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 0 14px ${c}77,0 3px 8px rgba(0,0,0,.4);transform:rotate(${s.hdg}deg)">🚌</div>
-    <div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);background:rgba(6,10,18,.9);border:1px solid ${c}99;color:${c};font-size:7px;font-family:'JetBrains Mono',monospace;padding:1px 4px;border-radius:3px;white-space:nowrap;font-weight:600">${s.rnum}</div>
-  </div>`;
-  return L.divIcon({html,className:'',iconSize:[32,36],iconAnchor:[15,15]});
-}
-
-// ─────────────────────────────────────────────────────────────────
-// STOP BOX
-// ─────────────────────────────────────────────────────────────────
-function openStopBox(sid, name, rt) {
+// ── Stop box ──
+function openStopBox(sid,name,rt){
   selStop={sid,name,rt};
   document.getElementById('stopname').textContent=name;
   document.getElementById('stop-routetag').textContent='Route '+rt.num+' · '+rt.stops.length+' stops';
   document.getElementById('modal-stop-name').textContent=name;
   renderArrivals(sid);
   document.getElementById('stopbox').classList.add('show');
-  if(selBus){ document.getElementById('ibox').classList.remove('show'); selBus=null; }
+  if(selBus){document.getElementById('ibox').classList.remove('show');selBus=null;}
 }
-
-function renderArrivals(sid) {
-  const arrivals=calcETAsForStop(sid);
-  const el=document.getElementById('arrivals-list');
-  if(!arrivals.length){ el.innerHTML='<div class="no-arrivals">No buses currently heading this way.</div>'; return; }
-  el.innerHTML=arrivals.map(a=>{
-    const cls=a.etaMin<=3?'eta-now':a.etaMin<=12?'eta-soon':'eta-later';
+function renderArrivals(sid){
+  const arr=etasForStop(sid),el=document.getElementById('arrivals-list');
+  if(!arr.length){el.innerHTML='<div class="arr-empty">No buses heading this way right now.</div>';return;}
+  el.innerHTML=arr.map(a=>{
+    const cls=a.etaMin<=3?'e-now':a.etaMin<=12?'e-soon':'e-far';
     const txt=a.etaMin<=1?'NOW':a.etaMin+' min';
     const occ=Math.round((a.occ/a.cap)*100);
-    const oc=occ>80?'var(--red)':occ>55?'var(--amber)':'var(--green)';
-    return `<div class="arrival-row">
-      <div class="arrival-routetag" style="background:${a.color}22;color:${a.color}">${a.routeNum}</div>
-      <div class="arrival-bus" title="${a.busId}">${a.busId}</div>
-      <div class="arrival-right">
-        <div class="eta-chip ${cls}">${txt}</div>
-        <div class="arrival-occ" style="color:${oc}">${occ}% full</div>
+    const oc=occ>80?'var(--bad)':occ>55?'var(--warn)':'var(--go)';
+    return `<div class="arr-row">
+      <div class="arr-badge" style="background:${a.color}22;color:${a.color}">${a.routeNum}</div>
+      <div class="arr-info">
+        <div class="arr-bus">${a.busId}</div>
+        <div class="arr-occ" style="color:${oc}">${occ}% occupied</div>
       </div>
+      <div class="arr-eta"><span class="eta-pill ${cls}">${txt}</span></div>
     </div>`;
   }).join('');
 }
+function closeStopBox(){selStop=null;document.getElementById('stopbox').classList.remove('show');}
 
-function closeStopBox(){ selStop=null; document.getElementById('stopbox').classList.remove('show'); }
-
-// ─────────────────────────────────────────────────────────────────
-// SIMULATION
-// ─────────────────────────────────────────────────────────────────
+// ── Simulation ──
 function simulate(){
   tick++;
-  if(wsMode==='simulation') simTime=new Date(simTime.getTime()+8000*simSpd);
-  if(wsMode==='simulation') Object.keys(BS).forEach(id=>moveBus(id));
-
-  Object.keys(BS).forEach(id=>{
-    const s=BS[id]; const vis=activeR.has(s.route);
-    MK[id].setOpacity(vis?1:.07);
-    if(vis){ MK[id].setLatLng([s.lat,s.lng]); MK[id].setIcon(mkIcon(s)); }
-  });
-
-  if(tick%18===0){ const ids=Object.keys(BS); const t=BS[ids[Math.floor(Math.random()*ids.length)]]; t.status=t.status==='on-time'?'delayed':'on-time'; }
-  if(tick%20===0) pushAlert();
-  if(tick%80===0) arrivalCountDisplay=countArrivals();
-
-  updateKPIs(); renderFleet();
-  if(selBus) refreshInfo(selBus);
-  if(selStop) renderArrivals(selStop.sid);
-  checkSubscriptionAlerts();
-
   if(wsMode==='simulation'){
-    const h=simTime.getHours().toString().padStart(2,'0');
-    const mi=simTime.getMinutes().toString().padStart(2,'0');
-    const sc=simTime.getSeconds().toString().padStart(2,'0');
-    document.getElementById('clk').textContent=h+':'+mi+':'+sc;
-  } else {
-    const now=new Date();
-    document.getElementById('clk').textContent=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0')+':'+now.getSeconds().toString().padStart(2,'0');
+    simTime=new Date(simTime.getTime()+8000*simSpd);
+    Object.keys(BS).forEach(moveBus);
   }
+  Object.keys(BS).forEach(id=>{
+    const s=BS[id],vis=activeR.has(s.route);
+    MK[id].setOpacity(vis?1:.07);
+    if(vis){MK[id].setLatLng([s.lat,s.lng]);MK[id].setIcon(mkIcon(s));}
+  });
+  if(tick%18===0){const ids=Object.keys(BS);const t=BS[ids[Math.floor(Math.random()*ids.length)]];t.status=t.status==='on-time'?'delayed':'on-time';}
+  if(tick%20===0)pushAlert();
+  if(tick%80===0)arrivalCountDisplay=countArr();
+  updateKPIs();renderFleet();
+  if(selBus)refreshInfo(selBus);
+  if(selStop)renderArrivals(selStop.sid);
+  checkSubAlerts();
+  const t=wsMode==='simulation'?simTime:new Date();
+  document.getElementById('clk').textContent=[t.getHours(),t.getMinutes(),t.getSeconds()].map(n=>String(n).padStart(2,'0')).join(':');
 }
-
 function moveBus(id){
-  const s=BS[id], rt=R(s.route), ns=rt.stops[s.nsi];
-  const dl=ns.lat-s.lat, dn=ns.lng-s.lng, dist=Math.sqrt(dl*dl+dn*dn);
-  const step=0.00022*(simSpd/4);
-  if(dist<0.0007){
+  const s=BS[id],rt=Rfn(s.route),ns=rt.stops[s.nsi];
+  const dl=ns.lat-s.lat,dn=ns.lng-s.lng,dist=Math.sqrt(dl*dl+dn*dn);
+  const step=.00022*(simSpd/4);
+  if(dist<.0007){
     s.nsi=(s.nsi+1)%rt.stops.length;
     s.occ=Math.max(0,Math.min(s.cap,s.occ+Math.floor((Math.random()-.3)*8)));
     s.jpct=Math.round((s.nsi/Math.max(1,rt.stops.length-1))*100);
-    arrivalCountThisMin++;
-  } else {
-    s.lat+=(dl/dist)*step; s.lng+=(dn/dist)*step;
+  }else{
+    s.lat+=(dl/dist)*step;s.lng+=(dn/dist)*step;
     s.hdg=Math.atan2(dn,dl)*(180/Math.PI);
   }
   s.spd=Math.max(8,Math.min(55,s.spd+(Math.random()-.5)*2));
 }
 
-// ─────────────────────────────────────────────────────────────────
-// SUBSCRIPTION ALERTS
-// ─────────────────────────────────────────────────────────────────
-const notifiedSet=new Set();
-
-function checkSubscriptionAlerts(){
-  if(!subscriptions.length) return;
+// ── Sub alerts ──
+const notified=new Set();
+function checkSubAlerts(){
+  if(!subscriptions.length)return;
   subscriptions.forEach(sub=>{
-    calcETAsForStop(sub.sid).forEach(a=>{
+    etasForStop(sub.sid).forEach(a=>{
       if(a.etaMin<=5&&a.etaMin>=0){
-        const key=`${a.busId}:${sub.sid}`;
-        if(!notifiedSet.has(key)){
-          notifiedSet.add(key);
-          showInAppAlert(`🔔 Bus ${a.routeNum} arriving at ${sub.stopName} in ~${a.etaMin} min`);
-          setTimeout(()=>notifiedSet.delete(key),30*60*1000);
+        const k=`${a.busId}:${sub.sid}`;
+        if(!notified.has(k)){
+          notified.add(k);
+          inAppAlert(`🔔 Bus ${a.routeNum} arriving at ${sub.stopName} in ~${a.etaMin} min`);
+          setTimeout(()=>notified.delete(k),30*60*1000);
         }
       }
     });
   });
 }
-
-function showInAppAlert(text){
-  const w=document.getElementById('awrap'), c=document.createElement('div');
-  c.className='achip';
-  c.style.cssText='background:rgba(41,182,246,.08);border-color:rgba(41,182,246,.2);color:var(--blue-b)';
-  c.textContent=text; w.appendChild(c);
+function inAppAlert(text){
+  const w=document.getElementById('awrap'),c=document.createElement('div');
+  c.className='achip blue';c.textContent=text;w.appendChild(c);
   setTimeout(()=>{if(c.parentNode)c.remove();},12000);
 }
 
-// ─────────────────────────────────────────────────────────────────
-// UI
-// ─────────────────────────────────────────────────────────────────
+// ── KPIs ──
 function updateKPIs(){
   const all=Object.values(BS).filter(s=>activeR.has(s.route));
   document.getElementById('kA').textContent=all.length;
@@ -1062,203 +1340,185 @@ function updateKPIs(){
   document.getElementById('kE').textContent=arrivalCountDisplay;
 }
 
+// ── Routes sidebar ──
 function buildRouteSidebar(){
-  const el=document.getElementById('rlist'); el.innerHTML='';
+  const el=document.getElementById('rlist');el.innerHTML='';
   ROUTES.forEach(rt=>{
     const on=activeR.has(rt.id);
-    const stops=rt.stops.map((st,i)=>{
-      const last=i===rt.stops.length-1;
-      return `<div class="snode"><div class="sdot" style="border-color:${rt.color};background:${i===0||last?rt.color:'transparent'}"></div><div class="sname" title="${st.name}">${st.name.split(' ').slice(0,2).join(' ')}</div></div>`+(last?'':`<div class="sline" style="background:${rt.color}55"></div>`);
-    }).join('');
     const d=document.createElement('div');
-    d.className='ritem'+(on?'':' dim');
+    d.className='rcard'+(on?'':' dim');
+    d.style.setProperty('--rc',rt.color);
     d.innerHTML=`
-      <div class="rhead">
-        <div style="display:flex;align-items:baseline;gap:0">
-          <span class="rnum" style="color:${rt.color}">${rt.num}</span>
-          <span class="rnum-meta">${rt.stops.length} stops</span>
-        </div>
-        <button class="rtoggle ${on?'on':'off'}" style="background:${rt.color}" onclick="toggleR('${rt.id}',this,event)"></button>
+      <div class="rcard-dot" style="background:linear-gradient(145deg,${rt.color}dd,${rt.color}88)">${rt.num}</div>
+      <div class="rcard-info">
+        <div class="rcard-num" style="color:${rt.color};text-shadow:0 0 12px ${rt.color}66">Route ${rt.num}</div>
+        <div class="rcard-route">${rt.stops[0].name} → ${rt.stops[rt.stops.length-1].name}</div>
+        <div class="rcard-meta">${rt.stops.length} stops</div>
       </div>
-      <div class="rpath">${rt.stops[0].name} → ${rt.stops[rt.stops.length-1].name}</div>
-      <div class="sstrip">${stops}</div>`;
+      <button class="rcard-toggle ${on?'on':'off'}" style="background:${rt.color}" onclick="toggleR('${rt.id}',this,event)"></button>`;
     el.appendChild(d);
   });
 }
-
 function toggleR(id,btn,e){
   e.stopPropagation();
-  if(activeR.has(id)){activeR.delete(id);btn.className='rtoggle off';btn.style.background='';}
-  else{activeR.add(id);btn.className='rtoggle on';btn.style.background=R(id).color;}
-  btn.closest('.ritem').classList.toggle('dim',!activeR.has(id));
+  if(activeR.has(id)){activeR.delete(id);btn.className='rcard-toggle off';btn.style.background='';}
+  else{activeR.add(id);btn.className='rcard-toggle on';btn.style.background=Rfn(id).color;}
+  btn.closest('.rcard').classList.toggle('dim',!activeR.has(id));
   updateKPIs();
 }
 
+// ── Fleet ──
 function renderFleet(){
   const q=(document.getElementById('fsrch').value||'').toLowerCase();
-  const el=document.getElementById('flist'); el.innerHTML='';
+  const el=document.getElementById('flist');el.innerHTML='';
   Object.values(BS).forEach(s=>{
-    if(q&&!s.id.toLowerCase().includes(q)&&!s.dest.toLowerCase().includes(q)&&!s.origin.toLowerCase().includes(q)) return;
-    const rt=R(s.route), ns=rt.stops[s.nsi];
+    if(q&&!s.id.toLowerCase().includes(q)&&!s.dest.toLowerCase().includes(q)&&!s.origin.toLowerCase().includes(q))return;
+    const rt=Rfn(s.route),ns=rt.stops[s.nsi];
     const occ=Math.round((s.occ/s.cap)*100);
-    const oc=occ>80?'var(--red)':occ>55?'var(--amber)':'var(--green)';
-    const sc=s.status==='on-time'?'var(--green)':'var(--red)';
+    const ocC=occ>80?'var(--bad)':occ>55?'var(--warn)':'var(--go)';
+    const stC=s.status==='on-time'?'var(--go)':'var(--bad)';
     const dim=!activeR.has(s.route);
-    const distToNext=haversine(s.lat,s.lng,ns.lat,ns.lng);
-    const etaNext=Math.round((distToNext/Math.max(s.spd||20,5))*60);
-    const etaText=etaNext<=1?'NOW':etaNext+' min';
-    const etaColor=etaNext<=3?'var(--green)':etaNext<=10?'var(--amber)':'var(--txm)';
+    const dn=hav(s.lat,s.lng,ns.lat,ns.lng);
+    const etaN=Math.round((dn/Math.max(s.spd||20,5))*60);
+    const etaT=etaN<=1?'NOW':etaN+' min';
+    const etaC=etaN<=3?'var(--go)':etaN<=10?'var(--warn)':'var(--t2)';
     const card=document.createElement('div');
     card.className='bcard'+(selBus===s.id?' sel':'');
-    card.style.opacity=dim?.25:1;
+    card.style.opacity=dim?.22:1;
     card.innerHTML=`
-      <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:${s.color};border-radius:2px 0 0 2px"></div>
-      <div class="bc1">
-        <div class="bcname">${s.id}</div>
-        <div style="display:flex;gap:5px;align-items:center">
-          ${s.gpsSource?`<span style="font-family:var(--mono);font-size:8px;color:var(--blue-b);background:var(--blue-d);padding:1px 5px;border-radius:3px;border:1px solid rgba(41,182,246,.2)">GPS</span>`:''}
-          <div class="bctag" style="background:${s.color}22;color:${s.color}">${s.rnum}</div>
+      <div class="bcard-bar" style="background:linear-gradient(to bottom,${s.color},${s.color}88)"></div>
+      <div class="bcard-row1">
+        <div class="bcard-name">${s.id}</div>
+        <div class="bcard-badges">
+          ${s.gpsSource?'<span class="badge badge-gps">GPS</span>':''}
+          <span class="badge badge-route" style="background:${s.color}18;color:${s.color}">${s.rnum}</span>
         </div>
       </div>
-      <div class="bcdest"><span style="color:var(--txm)">To</span> <span style="color:var(--tx3);font-weight:600">${s.dest}</span></div>
-      <div class="bc2">
-        <div class="bcstat" style="color:${sc}">● ${s.status}</div>
-        <div class="bcstat">⚡ ${Math.round(s.spd)} km/h</div>
-        <div class="bcstat">👤 ${s.occ}/${s.cap}</div>
+      <div class="bcard-dest">To <span>${s.dest}</span></div>
+      <div class="bcard-stats">
+        <div class="bstat"><div class="bstat-dot" style="background:${stC};box-shadow:0 0 6px ${stC}"></div>${s.status}</div>
+        <div class="bstat">⚡ ${Math.round(s.spd)} km/h</div>
+        <div class="bstat">👤 ${s.occ}/${s.cap}</div>
       </div>
-      <div class="bcnext">Next: <span style="color:var(--amber)">${ns.name}</span></div>
-      <div class="bceta">ETA: <span style="color:${etaColor};font-weight:600">${etaText}</span></div>
-      <div class="occbar"><div class="occfill" style="width:${occ}%;background:${oc}"></div></div>`;
+      <div class="bcard-next">Next: <strong>${ns.name}</strong> — <span style="color:${etaC};font-weight:600">${etaT}</span></div>
+      <div class="bcard-occ">
+        <div class="occ-bar"><div class="occ-fill" style="width:${occ}%;background:${ocC};box-shadow:0 0 6px ${ocC}"></div></div>
+        <div class="occ-pct">${occ}%</div>
+      </div>`;
     card.onclick=()=>selBusFn(s.id);
     el.appendChild(card);
   });
 }
-
 function selBusFn(id){
-  selBus=id; const s=BS[id];
+  selBus=id;const s=BS[id];
   MAP.panTo([s.lat,s.lng],{animate:true,duration:.6});
   closeStopBox();
   document.getElementById('ibox').classList.add('show');
-  refreshInfo(id); renderFleet(); switchTab('fleet');
+  refreshInfo(id);renderFleet();switchTab('fleet');
 }
-
 function refreshInfo(id){
-  const s=BS[id], rt=R(s.route), ns=rt.stops[s.nsi];
+  const s=BS[id],rt=Rfn(s.route),ns=rt.stops[s.nsi];
   const pct=Math.min(99,Math.max(1,s.jpct||1));
   const occ=Math.round((s.occ/s.cap)*100);
-  const stc=s.status==='on-time'?'var(--green)':'var(--red)';
-  const etaNext=Math.round((haversine(s.lat,s.lng,ns.lat,ns.lng)/Math.max(s.spd||20,5))*60);
+  const stC=s.status==='on-time'?'var(--go)':'var(--bad)';
+  const etaN=Math.round((hav(s.lat,s.lng,ns.lat,ns.lng)/Math.max(s.spd||20,5))*60);
 
-  document.getElementById('ibid').innerHTML=`<span style="color:${s.color}">${s.id}</span>`;
+  document.getElementById('ibid').innerHTML=`<span style="color:${s.color};text-shadow:0 0 14px ${s.color}88">${s.id}</span>`;
   document.getElementById('gps-source-badge').style.display=s.gpsSource?'inline-block':'none';
-  document.getElementById('ijf').style.cssText=`width:${pct}%;background:${s.color}`;
-  document.getElementById('ijt').style.cssText=`left:${pct}%;background:${s.color};border-color:var(--bg)`;
+  document.getElementById('ijf').style.cssText=`width:${pct}%;background:${s.color};box-shadow:0 0 8px ${s.color}`;
+  document.getElementById('ijt').style.cssText=`left:${pct}%;background:${s.color};border-color:var(--bg);box-shadow:0 0 10px ${s.color},0 2px 6px rgba(0,0,0,.6)`;
   document.getElementById('ijor').textContent=s.origin.split(' ').slice(0,2).join(' ');
   document.getElementById('ijde').textContent=s.dest.split(' ').slice(0,2).join(' ');
-  document.getElementById('ibody').innerHTML=`
-    <div class="irow"><span class="irk">Route</span><span class="irv" style="color:${s.color}">${rt.num} · ${rt.stops[0].name.split(' ')[0]}→${rt.stops[rt.stops.length-1].name.split(' ')[0]}</span></div>
-    <div class="irow"><span class="irk">Status</span><span class="irv" style="color:${stc}">${s.status.toUpperCase()}</span></div>
-    <div class="irow"><span class="irk">Speed</span><span class="irv">${Math.round(s.spd)} km/h</span></div>
-    <div class="irow"><span class="irk">Occupancy</span><span class="irv">${s.occ}/${s.cap} (${occ}%)</span></div>
-    <div class="irow"><span class="irk">Next Stop</span><span class="irv" style="color:var(--amber)">${ns.name}</span></div>
-    <div class="irow"><span class="irk">ETA</span><span class="irv" style="color:var(--green)">${etaNext<=1?'< 1 min':etaNext+' min'}</span></div>
-    <div class="irow"><span class="irk">Destination</span><span class="irv">${s.dest}</span></div>
-    <div class="irow"><span class="irk">Driver</span><span class="irv">${s.driver}</span></div>
-    <div class="irow"><span class="irk">Coords</span><span class="irv" style="font-size:9px;font-family:var(--mono)">${s.lat.toFixed(5)}, ${s.lng.toFixed(5)}</span></div>
-    <div class="irow"><span class="irk">Source</span><span class="irv" style="color:${s.gpsSource?'var(--green)':'var(--txm)'}">${s.gpsSource?'LIVE GPS':'SIMULATION'}</span></div>`;
 
-  const etaStops=calcETAsForBus(id);
-  document.getElementById('eta-stops-list').innerHTML=etaStops.map(e=>{
-    const col=e.etaMin<=3?'var(--green)':e.etaMin<=10?'var(--amber)':'var(--txm)';
-    return `<div class="eta-stop-row"><span class="eta-stop-name">${e.stop.name}</span><span class="eta-stop-min" style="color:${col}">${e.etaMin<=1?'NOW':e.etaMin+' min'}</span></div>`;
-  }).join('')||'<div style="font-size:9px;color:var(--txm);font-family:var(--mono)">Last stop reached</div>';
+  const cells=[
+    ['Route',`<span style="color:${s.color};text-shadow:0 0 10px ${s.color}66">${rt.num}</span>`],
+    ['Status',`<span style="color:${stC}">${s.status}</span>`],
+    ['Speed',`${Math.round(s.spd)} km/h`],
+    ['Occupancy',`${s.occ}/${s.cap} (${occ}%)`],
+    ['Next Stop',`<span style="color:var(--warn)">${ns.name}</span>`],
+    ['ETA',`<span style="color:var(--go)">${etaN<=1?'<1 min':etaN+' min'}</span>`],
+    ['Destination',s.dest],
+    ['Driver',s.driver],
+  ];
+  document.getElementById('ibody').innerHTML=cells.map(([k,v])=>`
+    <div class="ig-cell"><div class="ig-k">${k}</div><div class="ig-v">${v}</div></div>`).join('');
+
+  const stops=etasForBus(id);
+  document.getElementById('eta-stops-list').innerHTML=stops.map(e=>{
+    const c=e.etaMin<=3?'var(--go)':e.etaMin<=10?'var(--warn)':'var(--t2)';
+    return `<div class="eta-stop-row"><span class="eta-stop-name">${e.stop.name}</span><span class="eta-stop-min" style="color:${c}">${e.etaMin<=1?'NOW':e.etaMin+' min'}</span></div>`;
+  }).join('')||'<div style="padding:8px 10px;font-size:10px;color:var(--t3);font-family:var(--m)">Last stop reached</div>';
 }
-
-function closeInfo(){ selBus=null; document.getElementById('ibox').classList.remove('show'); renderFleet(); }
+function closeInfo(){selBus=null;document.getElementById('ibox').classList.remove('show');renderFleet();}
 
 function pushAlert(text){
-  const w=document.getElementById('awrap'), c=document.createElement('div');
-  c.className='achip'; c.textContent='⚠ '+(text||ALERTS_POOL[Math.floor(Math.random()*ALERTS_POOL.length)]);
-  w.appendChild(c); if(w.children.length>3) w.removeChild(w.firstChild);
+  const w=document.getElementById('awrap'),c=document.createElement('div');
+  c.className='achip';c.textContent='⚠ '+(text||ALERTS_POOL[Math.floor(Math.random()*ALERTS_POOL.length)]);
+  w.appendChild(c);if(w.children.length>3)w.removeChild(w.firstChild);
   setTimeout(()=>{if(c.parentNode)c.remove();},9000);
-  liveTrafficAlerts.unshift(c.textContent); if(liveTrafficAlerts.length>5) liveTrafficAlerts.pop();
-  renderTrafficAlerts();
+  liveAlerts.unshift(c.textContent);if(liveAlerts.length>5)liveAlerts.pop();
+  document.getElementById('ta-list').innerHTML=liveAlerts.map(a=>`<div class="tchip">${a}</div>`).join('');
 }
-
-function renderTrafficAlerts(){
-  document.getElementById('ta-list').innerHTML=liveTrafficAlerts.map(a=>`<div class="ta-chip">${a}</div>`).join('');
+function switchTab(n){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  document.getElementById('tab-'+n).classList.add('on');
+  document.getElementById('pane-'+n).classList.add('on');
+  if(n==='alerts')renderSubList();
 }
+function setSpd(v){simSpd=+v;document.getElementById('spdlbl').textContent=v+'×';}
 
-function switchTab(name){
-  document.querySelectorAll('.sbt').forEach(t=>t.classList.remove('on'));
-  document.querySelectorAll('.sbpane').forEach(p=>p.classList.remove('on'));
-  document.getElementById('tab-'+name).classList.add('on');
-  document.getElementById('pane-'+name).classList.add('on');
-  if(name==='alerts') renderSubList();
-}
-
-function setSpd(v){ simSpd=+v; document.getElementById('spdlbl').textContent=v+'×'; }
-
-// ─────────────────────────────────────────────────────────────────
-// SUBSCRIPTIONS
-// ─────────────────────────────────────────────────────────────────
+// ── Subscriptions ──
 function openSubscribeModal(){
-  if(!selStop) return;
+  if(!selStop)return;
   document.getElementById('modal-stop-name').textContent=selStop.name;
   document.getElementById('modal-form').style.display='block';
   document.getElementById('modal-success').style.display='none';
   document.getElementById('modal-phone').value='';
   const sel=document.getElementById('modal-route');
   sel.innerHTML='<option value="">Any bus at this stop</option>';
-  ROUTES.forEach(rt=>{ if(rt.stops.some(s=>s.sid===selStop.sid)) sel.innerHTML+=`<option value="${rt.id}">Route ${rt.num} only</option>`; });
+  ROUTES.forEach(rt=>{if(rt.stops.some(s=>s.sid===selStop.sid))sel.innerHTML+=`<option value="${rt.id}">Route ${rt.num} only</option>`;});
   document.getElementById('modal-overlay').classList.add('show');
 }
-
-function closeModal(){ document.getElementById('modal-overlay').classList.remove('show'); }
-
+function closeModal(){document.getElementById('modal-overlay').classList.remove('show');}
 function selectChannel(btn){
-  document.querySelectorAll('.ch-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); modalChannel=btn.dataset.ch;
+  document.querySelectorAll('.ch-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');modalChannel=btn.dataset.ch;
 }
-
 function submitSubscription(){
   const phone=document.getElementById('modal-phone').value.trim();
   const routeId=document.getElementById('modal-route').value;
-  if(!phone){ document.getElementById('modal-phone').style.borderColor='var(--red)'; setTimeout(()=>document.getElementById('modal-phone').style.borderColor='',1500); return; }
-  const sub={ id:Date.now(), sid:selStop.sid, stopName:selStop.name, phone, routeId:routeId||null, channel:modalChannel, addedAt:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) };
+  if(!phone){const inp=document.getElementById('modal-phone');inp.style.borderColor='var(--bad)';setTimeout(()=>inp.style.borderColor='',1500);return;}
+  const sub={id:Date.now(),sid:selStop.sid,stopName:selStop.name,phone,routeId:routeId||null,channel:modalChannel,addedAt:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})};
   subscriptions=subscriptions.filter(s=>!(s.sid===sub.sid&&s.phone===sub.phone));
   subscriptions.push(sub);
   localStorage.setItem('cbl_subs',JSON.stringify(subscriptions));
-  if(wsClient&&wsClient.readyState===WebSocket.OPEN) wsClient.send(JSON.stringify({type:'SUBSCRIBE_STOP',stopId:sub.sid,phone,routeId,channel:modalChannel}));
-  else if(location.protocol!=='file:') fetch('/api/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,stopId:sub.sid,routeId,channel:modalChannel})}).catch(()=>{});
+  if(wsClient&&wsClient.readyState===WebSocket.OPEN)wsClient.send(JSON.stringify({type:'SUBSCRIBE_STOP',stopId:sub.sid,phone,routeId,channel:modalChannel}));
+  else if(location.protocol!=='file:')fetch('/api/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,stopId:sub.sid,routeId,channel:modalChannel})}).catch(()=>{});
   document.getElementById('success-phone').textContent=phone;
   document.getElementById('modal-form').style.display='none';
   document.getElementById('modal-success').style.display='block';
   renderSubList();
 }
-
 function removeSubscription(id){
   subscriptions=subscriptions.filter(s=>s.id!==id);
   localStorage.setItem('cbl_subs',JSON.stringify(subscriptions));
   renderSubList();
 }
-
 function renderSubList(){
   const el=document.getElementById('sub-list');
-  if(!subscriptions.length){ el.innerHTML=`<div class="no-subs"><span class="no-subs-icon">🔕</span>No active subscriptions.<br>Click a stop on the map<br>and tap "Alert Me".</div>`; return; }
+  if(!subscriptions.length){el.innerHTML='<div class="no-subs"><span class="no-subs-icon">🔕</span><p>No active subscriptions.<br>Click a stop on the map<br>and tap "Alert Me".</p></div>';return;}
   el.innerHTML=subscriptions.map(s=>`
-    <div class="sub-item">
-      <div class="sub-item-stop">📍 ${s.stopName}</div>
-      <div class="sub-item-meta">${s.channel==='whatsapp'?'💬':'📱'} ${s.phone}${s.routeId?' · Route '+R(s.routeId)?.num:' · All routes'}<br>Added ${s.addedAt}</div>
-      <button class="sub-remove" onclick="removeSubscription(${s.id})" title="Remove">✕</button>
+    <div class="sub-card">
+      <div class="sub-card-stop">📍 ${s.stopName}</div>
+      <div class="sub-card-meta">${s.channel==='whatsapp'?'💬':'📱'} ${s.phone}${s.routeId?' · Route '+Rfn(s.routeId)?.num:' · All routes'}<br>Added ${s.addedAt}</div>
+      <button class="sub-del" onclick="removeSubscription(${s.id})">✕</button>
     </div>`).join('');
 }
 
-// ─────────────────────────────────────────────────────────────────
-// BOOT
-// ─────────────────────────────────────────────────────────────────
-initMap(); buildRouteSidebar(); updateKPIs(); renderFleet(); renderSubList();
-connectWebSocket(); setInterval(simulate,750);
+// ── Boot ──
+initMap();buildRouteSidebar();updateKPIs();renderFleet();renderSubList();
+connectWS();setInterval(simulate,750);
 </script>
 </body>
 </html>
